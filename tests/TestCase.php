@@ -1,36 +1,36 @@
 <?php
 
-namespace VendorName\Skeleton\Tests;
+namespace HelgeSverre\ReceiptParser\Tests;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Dotenv\Dotenv;
+use HelgeSverre\ReceiptParser\ReceiptParserServiceProvider;
+use OpenAI\Laravel\ServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
-use VendorName\Skeleton\SkeletonServiceProvider;
 
 class TestCase extends Orchestra
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'VendorName\\Skeleton\\Database\\Factories\\'.class_basename($modelName).'Factory'
-        );
-    }
-
     protected function getPackageProviders($app)
     {
         return [
-            SkeletonServiceProvider::class,
+            ReceiptParserServiceProvider::class,
+            ServiceProvider::class,
         ];
     }
 
     public function getEnvironmentSetUp($app)
     {
+        // Load .env.test into the environment.
+        if (file_exists(dirname(__DIR__).'/.env')) {
+            (Dotenv::createImmutable(dirname(__DIR__), '.env'))->load();
+        }
+
         config()->set('database.default', 'testing');
 
-        /*
-        $migration = include __DIR__.'/../database/migrations/create_skeleton_table.php.stub';
-        $migration->up();
-        */
+        config()->set('openai.api_key', env('OPENAI_KEY'));
+
+        config()->set('receipt-parser.textract_region', env('TEXTRACT_REGION'));
+        config()->set('receipt-parser.textract_version', env('TEXTRACT_VERSION'));
+        config()->set('receipt-parser.textract_key', env('TEXTRACT_KEY'));
+        config()->set('receipt-parser.textract_secret', env('TEXTRACT_SECRET'));
     }
 }

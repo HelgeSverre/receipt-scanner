@@ -1,0 +1,17 @@
+Extract the following information from the receipt
+- order Ref
+- date (date): format with  ISO-8601
+- tax amount (taxAmount)
+- shipping amount (shippingAmount)
+- total amount (totalAmount)
+- currency (currency)
+- seller / store (name, vatId, address) (use "merchant" as key)
+- line items (name, qty, price) Format the price using period as decimal and remove the currency, qty is usually a low number or 1, the price cannot be null
+- If you don't find any suitable values use null
+- the date should be formatted using the following template: YEAR-MONTH-DAY
+
+RECEIPT
+
+[REPLACE_TEXT]
+
+OUTPUT IN JSON
