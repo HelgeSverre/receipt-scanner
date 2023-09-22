@@ -27,7 +27,7 @@ class ReceiptScannerServiceProvider extends PackageServiceProvider
         $this->loadViewsFrom($this->package->basePath('/../resources/prompts'), 'receipt-scanner');
 
         $this->publishes([
-            $this->package->basePath('/../resources/prompts') => base_path("resources/prompts/vendor/{$this->packageView($this->package->viewNamespace)}"),
+            $this->package->basePath('/../resources/prompts') => base_path("resources/views/vendor/{$this->packageView($this->package->viewNamespace)}"),
         ], "{$this->packageView($this->package->viewNamespace)}-prompts");
 
         $this->app->singleton(TextLoaderFactory::class, fn ($app) => new TextLoaderFactory($app));
