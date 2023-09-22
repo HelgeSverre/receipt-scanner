@@ -298,7 +298,7 @@ Source: https://aws.amazon.com/textract/faqs/
 You may publish the prompt file that is used under the hood by runnign this command:
 
 ```bash
-php artisan vendor:publish --tag="receipt-scanner-views"
+php artisan vendor:publish --tag="receipt-scanner-prompts"
 ```
 
 This package simply uses blade files as prompts, the `{{ $context }}` variable will be replaced by the text you pass
@@ -307,15 +307,31 @@ to `ReceiptScanner::scan("text here")`.
 ## Adding prompts/templates
 
 By default, the package uses the `receipt.blade.php` file as its prompt template, you may add additional templates by
-simply creating a blade file and changingg the `$template` parameter when calling `scan()`
+simply creating a blade file in `resources/views/vendor/receipt-scanner/invoice_minimal.blade.php` and changing
+the `$template` parameter when calling `scan()`
+
+**Example prompt:**
+
+```blade
+Extract the following fields from the text blow, output as JSON
+
+date (as string in the  Y-m-d format)
+total_amount (as float, do not include currency symbol) 
+vendor_name (company name)
+
+{{ $context }}
+
+OUTPUT IN JSON
+```
 
 ```php
 use HelgeSverre\ReceiptScanner\Facades\ReceiptScanner;
 
 $receipt = ReceiptScanner::scan(
-    TextContent|string $text,
-    Model $model = Model::TURBO_INSTRUCT,
-    string $template = 'invoice_minimal',
+    text: "Your invoice here",
+    model:  Model::TURBO_INSTRUCT,
+    template: 'invoice_minimal',
+    asArray: true,
 );
 ```
 
