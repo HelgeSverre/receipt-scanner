@@ -22,7 +22,7 @@ class ReceiptParserServiceProvider extends PackageServiceProvider
 
     }
 
-    public function boot()
+    public function bootingPackage()
     {
 
         $this->app->bind(TextractClient::class, function () {
