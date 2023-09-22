@@ -1,6 +1,6 @@
 <?php
 
-namespace HelgeSverre\ReceiptParser\Services\Textract\Data;
+namespace HelgeSverre\ReceiptScanner\Services\Textract\Data;
 
 use Aws\Result;
 use Illuminate\Support\Arr;

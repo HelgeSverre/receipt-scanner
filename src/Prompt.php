@@ -1,6 +1,6 @@
 <?php
 
-namespace HelgeSverre\ReceiptParser;
+namespace HelgeSverre\ReceiptScanner;
 
 use Illuminate\Support\Facades\View;
 
@@ -8,6 +8,6 @@ class Prompt
 {
     public static function load(string $filename, array $data = []): string
     {
-        return View::make("receipt-parser::{$filename}", $data)->render();
+        return View::make("receipt-scanner::{$filename}", $data)->render();
     }
 }

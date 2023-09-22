@@ -1,6 +1,6 @@
 <?php
 
-use HelgeSverre\ReceiptParser\TextUtils;
+use HelgeSverre\ReceiptScanner\TextUtils;
 
 it('normalizes whitespace', function () {
     $input = '   Hello   World!   ';

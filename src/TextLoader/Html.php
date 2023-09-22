@@ -1,10 +1,10 @@
 <?php
 
-namespace HelgeSverre\ReceiptParser\TextLoader;
+namespace HelgeSverre\ReceiptScanner\TextLoader;
 
-use HelgeSverre\ReceiptParser\Contracts\TextLoader;
-use HelgeSverre\ReceiptParser\TextContent;
-use HelgeSverre\ReceiptParser\TextUtils;
+use HelgeSverre\ReceiptScanner\Contracts\TextLoader;
+use HelgeSverre\ReceiptScanner\TextContent;
+use HelgeSverre\ReceiptScanner\TextUtils;
 
 class Html implements TextLoader
 {

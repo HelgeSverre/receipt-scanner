@@ -1,12 +1,12 @@
 <?php
 
-namespace HelgeSverre\ReceiptParser\TextLoader;
+namespace HelgeSverre\ReceiptScanner\TextLoader;
 
 use Exception;
-use HelgeSverre\ReceiptParser\Contracts\TextLoader;
-use HelgeSverre\ReceiptParser\Services\Textract\Data\S3Object;
-use HelgeSverre\ReceiptParser\Services\Textract\TextractService;
-use HelgeSverre\ReceiptParser\TextContent;
+use HelgeSverre\ReceiptScanner\Contracts\TextLoader;
+use HelgeSverre\ReceiptScanner\Services\Textract\Data\S3Object;
+use HelgeSverre\ReceiptScanner\Services\Textract\TextractService;
+use HelgeSverre\ReceiptScanner\TextContent;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -15,51 +15,91 @@ class TextractOcr implements TextLoader
 {
     public function __construct(protected TextractService $textractService)
     {
-
     }
 
     public function load(mixed $data): ?TextContent
     {
-
         if ($data instanceof UploadedFile) {
-
-            if ($data->getMimeType() == 'application/pdf') {
-
-                // todo: copy to s3 storage automatically and generate s3 object
-                if (config('receipt-parser.textract_disk')) {
-                    $path = sprintf('receipt-parser/%s.pdf', Str::uuid());
-
-                    $disk = config('receipt-parser.textract_disk');
-
-                    $bucket = config("filesystems.$disk.textract.bucket");
-
-                    if (! $bucket) {
-                        throw new Exception("Bucket is not defined in disk '$disk'");
-                    }
-
-                    $success = Storage::disk($disk)->put($path, $data->getContent());
-                    if (! $success) {
-                        throw new Exception('Could not upload file into the textract s3 bucket.');
-                    }
-
-                    $object = new S3Object(
-                        bucket: $bucket,
-                        name: $path,
-                    );
-                }
-            }
-
-            // TODO: throw if not known mimetype
-            return new TextContent(
-                $this->textractService->bytesToText($data->getContent())
-            );
+            return $this->loadFromUploadedFile($data);
         }
 
-        // Assuming it is the raw file contents
+        return $this->loadFromRawData($data);
+    }
+
+    protected function loadFromUploadedFile(UploadedFile $file): ?TextContent
+    {
+        // Check file type and size
+        $mimeType = $file->getMimeType();
+        $size = $file->getSize();
+        $mb = 1024 * 1024;
+
+        if ($mimeType == 'application/pdf') {
+            if ($size > 500 * $mb) {
+                throw new Exception('PDF file size exceeds the 500MB limit.');
+            }
+
+            return $this->loadPdfFromS3($file);
+        }
+
+        if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/bmp', 'image/gif', 'image/tiff'])) {
+            if ($size > 5 * $mb) {
+                throw new Exception('Image file size exceeds the 5MB limit.');
+            }
+
+            return $this->loadFromRawData($file->getContent());
+        }
+
+        throw new Exception("Unsupported mimetype: {$mimeType}");
+    }
+
+    protected function loadFromRawData(string $data): TextContent
+    {
         return new TextContent(
             $this->textractService->bytesToText($data)
         );
+    }
 
-        return null;
+    protected function loadPdfFromS3(UploadedFile $file): TextContent
+    {
+        $disk = $this->getDisk();
+        $bucket = $this->getBucket($disk);
+        $path = $this->storeFile($disk, $file);
+
+        return new TextContent(
+            $this->textractService->s3ObjectToText(
+                new S3Object(bucket: $bucket, name: $path)
+            )
+        );
+    }
+
+    protected function getDisk(): string
+    {
+        $disk = config('receipt-scanner.textract_disk');
+        if (! $disk) {
+            throw new Exception("Configuration option 'receipt-scanner.textract_disk' is not set, it is required for OCR-ing PDFs");
+        }
+
+        return $disk;
+    }
+
+    protected function getBucket(string $disk): string
+    {
+        $bucket = config("filesystems.$disk.textract.bucket");
+        if (! $bucket) {
+            throw new Exception("Bucket is not defined in disk '$disk'");
+        }
+
+        return $bucket;
+    }
+
+    protected function storeFile(string $disk, UploadedFile $file): string
+    {
+        $path = sprintf('receipt-scanner/%s.pdf', Str::uuid());
+        $success = Storage::disk($disk)->put($path, $file->getContent());
+        if (! $success) {
+            throw new Exception('Could not store the file in the textract s3 bucket.');
+        }
+
+        return $path;
     }
 }

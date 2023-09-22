@@ -1,9 +1,9 @@
 <?php
 
-namespace HelgeSverre\ReceiptParser\Data;
+namespace HelgeSverre\ReceiptScanner\Data;
 
 use Carbon\Carbon;
-use HelgeSverre\ReceiptParser\NumberParser;
+use HelgeSverre\ReceiptScanner\NumberParser;
 use Illuminate\Support\Arr;
 use PrinsFrank\Standards\Currency\CurrencyAlpha3;
 

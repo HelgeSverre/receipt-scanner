@@ -1,6 +1,6 @@
 <?php
 
-namespace HelgeSverre\ReceiptParser\Exceptions;
+namespace HelgeSverre\ReceiptScanner\Exceptions;
 
 use Exception;
 

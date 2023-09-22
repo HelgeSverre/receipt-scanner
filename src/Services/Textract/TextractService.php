@@ -1,11 +1,11 @@
 <?php
 
-namespace HelgeSverre\ReceiptParser\Services\Textract;
+namespace HelgeSverre\ReceiptScanner\Services\Textract;
 
 use Aws\Textract\TextractClient;
 use Exception;
-use HelgeSverre\ReceiptParser\Services\Textract\Data\S3Object;
-use HelgeSverre\ReceiptParser\Services\Textract\Data\TextractResponse;
+use HelgeSverre\ReceiptScanner\Services\Textract\Data\S3Object;
+use HelgeSverre\ReceiptScanner\Services\Textract\Data\TextractResponse;
 use Illuminate\Support\Arr;
 
 use function array_filter;

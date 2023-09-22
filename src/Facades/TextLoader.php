@@ -5,12 +5,12 @@ namespace HelgeSverre\ReceiptScanner\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \HelgeSverre\ReceiptScanner\ReceiptScanner
+ * @see \HelgeSverre\ReceiptScanner\TextLoaderFactory
  */
-class ReceiptParser extends Facade
+class TextLoader extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return \HelgeSverre\ReceiptScanner\ReceiptScanner::class;
+        return \HelgeSverre\ReceiptScanner\TextLoaderFactory::class;
     }
 }

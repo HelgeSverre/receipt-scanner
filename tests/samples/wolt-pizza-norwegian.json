@@ -11,67 +11,67 @@
     },
     "lineItems": [
         {
-            "name": "Mindes Spesialpizza Stor",
+            "text": "Mindes Spesialpizza Stor",
             "qty": 1,
             "price": 325.00,
             "sku": null
         },
         {
-            "name": "Mindes Spesialpizza Stor 15%",
+            "text": "Mindes Spesialpizza Stor 15%",
             "qty": 1,
             "price": 275.00,
             "sku": null
         },
         {
-            "name": "Noe ekstra på din store pizza: Ekstra bacon 15%",
+            "text": "Noe ekstra på din store pizza: Ekstra bacon 15%",
             "qty": 1,
             "price": 30.00,
             "sku": null
         },
         {
-            "name": "Ekstra tilbehør: Hvitløksdressing 15%",
+            "text": "Ekstra tilbehør: Hvitløksdressing 15%",
             "qty": 1,
             "price": 20.00,
             "sku": null
         },
         {
-            "name": "Hamburgermeny",
+            "text": "Hamburgermeny",
             "qty": 1,
             "price": 185.00,
             "sku": null
         },
         {
-            "name": "Hamburgermeny 15%",
+            "text": "Hamburgermeny 15%",
             "qty": 1,
             "price": 160.00,
             "sku": null
         },
         {
-            "name": "Velg ønsket størrelse: 160g 15%",
+            "text": "Velg ønsket størrelse: 160g 15%",
             "qty": 1,
             "price": 5.00,
             "sku": null
         },
         {
-            "name": "Velg drikke: Urge 15%",
+            "text": "Velg drikke: Urge 15%",
             "qty": 1,
             "price": 0.00,
             "sku": null
         },
         {
-            "name": "Ekstra tilbehør: Bernaisesaus 15%",
+            "text": "Ekstra tilbehør: Bernaisesaus 15%",
             "qty": 1,
             "price": 20.00,
             "sku": null
         },
         {
-            "name": "Levering 15%",
+            "text": "Levering 15%",
             "qty": 1,
             "price": 49.00,
             "sku": null
         },
         {
-            "name": "Serviceavgift 15%",
+            "text": "Serviceavgift 15%",
             "qty": 1,
             "price": 9.00,
             "sku": null

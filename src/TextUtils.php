@@ -1,6 +1,6 @@
 <?php
 
-namespace HelgeSverre\ReceiptParser;
+namespace HelgeSverre\ReceiptScanner;
 
 use Illuminate\Support\Str;
 use Symfony\Component\DomCrawler\Crawler;

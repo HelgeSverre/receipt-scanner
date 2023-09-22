@@ -1,6 +1,6 @@
 <?php
 
-namespace HelgeSverre\ReceiptParser\Enums;
+namespace HelgeSverre\ReceiptScanner\Enums;
 
 enum Model: string
 {

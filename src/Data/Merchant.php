@@ -1,6 +1,6 @@
 <?php
 
-namespace HelgeSverre\ReceiptParser\Data;
+namespace HelgeSverre\ReceiptScanner\Data;
 
 class Merchant
 {

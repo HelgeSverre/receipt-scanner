@@ -1,24 +1,19 @@
 <?php
 
-namespace HelgeSverre\ReceiptParser\TextLoader;
+namespace HelgeSverre\ReceiptScanner\TextLoader;
 
-use HelgeSverre\ReceiptParser\Contracts\TextLoader;
-use HelgeSverre\ReceiptParser\TextContent;
+use HelgeSverre\ReceiptScanner\Contracts\TextLoader;
+use HelgeSverre\ReceiptScanner\TextContent;
 use Smalot\PdfParser\Parser;
 
 class Pdf implements TextLoader
 {
-    protected Parser $parser;
-
-    public function __construct(Parser $parser)
+    public function load(mixed $data): ?TextContent
     {
-        $this->parser = $parser;
-    }
+        $parser = new Parser();
+        $parsed = $parser->parseContent($data);
+        $text = $parsed->getText();
 
-    public function load(mixed $data, array $meta = []): ?TextContent
-    {
-        return new TextContent(
-            $this->parser->parseContent($data)->getText()
-        );
+        return new TextContent($text);
     }
 }

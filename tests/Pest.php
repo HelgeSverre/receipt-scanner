@@ -1,5 +1,5 @@
 <?php
 
-use HelgeSverre\ReceiptParser\Tests\TestCase;
+use HelgeSverre\ReceiptScanner\Tests\TestCase;
 
 uses(TestCase::class)->in(__DIR__);

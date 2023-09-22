@@ -1,12 +1,12 @@
 {
-    "name": "helgesverre/receipt-parser",
-    "description": "Use OpenAI to parse structured receipt data from Images, Pdfs and emails.",
+    "name": "helgesverre/receipt-scanner",
+    "description": "Use OpenAI to extract structured receipt and invoice data from Text, Html, Images and PDFs.",
     "keywords": [
-        "HelgeSverre",
-        "laravel",
-        "receipt-parser"
+        "laravel-package",
+        "receipt",
+        "scanner"
     ],
-    "homepage": "https://github.com/helgesverre/receipt-parser",
+    "homepage": "https://github.com/helgesverre/receipt-scanner",
     "license": "MIT",
     "authors": [
         {
@@ -36,24 +36,26 @@
     },
     "autoload": {
         "psr-4": {
-
-            "HelgeSverre\\ReceiptParser\\": "src/"
+            "HelgeSverre\\ReceiptScanner\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "HelgeSverre\\ReceiptParser\\Tests\\": "tests/",
-            "Workbench\\App\\": "workbench/app/"
+            "HelgeSverre\\ReceiptScanner\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
         }
     },
     "scripts": {
-        "post-autoload-dump": "@composer run prepare",
-        "clear": "@php vendor/bin/testbench package:purge-receipt-parser --ansi",
-        "prepare": "@php vendor/bin/testbench package:discover --ansi",
-        "build": [
-            "@composer run prepare",
-            "@php vendor/bin/testbench workbench:build --ansi"
+        "post-autoload-dump": [
+            "@clear",
+            "@prepare",
+            "@composer run prepare"
         ],
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "build": "@php vendor/bin/testbench workbench:build --ansi",
         "start": [
             "Composer\\Config::disableProcessTimeout",
             "@composer run build",
@@ -62,7 +64,14 @@
         "analyse": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage",
-        "format": "vendor/bin/pint"
+        "format": "vendor/bin/pint",
+        "serve": [
+            "@build",
+            "@php vendor/bin/testbench serve"
+        ],
+        "lint": [
+            "@php vendor/bin/pint"
+        ]
     },
     "config": {
         "sort-packages": true,
@@ -75,10 +84,11 @@
     "extra": {
         "laravel": {
             "providers": [
-                "HelgeSverre\\ReceiptParser\\ReceiptParserServiceProvider"
+                "HelgeSverre\\ReceiptScanner\\ReceiptScannerServiceProvider"
             ],
             "aliases": {
-                "ReceiptParser": "HelgeSverre\\ReceiptParser\\Facades\\ReceiptParser"
+                "ReceiptScanner": "HelgeSverre\\ReceiptScanner\\Facades\\ReceiptScanner",
+                "Textloader": "HelgeSverre\\ReceiptScanner\\Facades\\TextLoader"
             }
         }
     },

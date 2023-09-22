@@ -1,15 +1,15 @@
 <?php
 
-namespace HelgeSverre\ReceiptParser;
+namespace HelgeSverre\ReceiptScanner;
 
-use HelgeSverre\ReceiptParser\Data\Receipt;
-use HelgeSverre\ReceiptParser\Enums\Model;
-use HelgeSverre\ReceiptParser\Exceptions\InvalidJsonReturnedError;
+use HelgeSverre\ReceiptScanner\Data\Receipt;
+use HelgeSverre\ReceiptScanner\Enums\Model;
+use HelgeSverre\ReceiptScanner\Exceptions\InvalidJsonReturnedError;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Responses\Chat\CreateResponse as ChatResponse;
 use OpenAI\Responses\Completions\CreateResponse as CompletionResponse;
 
-class ReceiptParser
+class ReceiptScanner
 {
     public function raw(
         array $data = [],

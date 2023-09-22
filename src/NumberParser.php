@@ -1,6 +1,6 @@
 <?php
 
-namespace HelgeSverre\ReceiptParser;
+namespace HelgeSverre\ReceiptScanner;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
@@ -16,7 +16,7 @@ class NumberParser
     public static function parse($text): float|int|null
     {
         // Very deterministic "parsing" into correct datatype stuff.
-        if (! config('receipt-parser.use_forgiving_number_parser', true)) {
+        if (! config('receipt-scanner.use_forgiving_number_parser', true)) {
             return match (true) {
                 is_int($text) => (int) $text,
                 is_float($text) => (float) $text,

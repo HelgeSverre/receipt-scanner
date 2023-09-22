@@ -1,6 +1,6 @@
 <?php
 
-namespace HelgeSverre\ReceiptParser\Services\Textract\Data;
+namespace HelgeSverre\ReceiptScanner\Services\Textract\Data;
 
 final class Block
 {
