@@ -53,4 +53,20 @@ class Receipt
                 ->toArray(),
         );
     }
+
+    public function toArray(): array
+    {
+        return [
+            'orderRef' => $this->orderRef,
+            'date' => $this->date?->toDateTimeString(),
+            'taxAmount' => $this->taxAmount,
+            'totalAmount' => $this->totalAmount,
+            'currency' => $this->currency?->value,
+            'merchant' => $this->merchant?->toArray(),
+            'lineItems' => array_map(
+                fn (LineItem $item) => $item->toArray(),
+                $this->lineItems ?? []
+            ),
+        ];
+    }
 }

@@ -18,4 +18,19 @@ class Merchant
         public ?string $phone,
     ) {
     }
+
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'vatId' => $this->vatId,
+            'address' => $this->address,
+            'city' => $this->city,
+            'zip' => $this->zip,
+            'country' => $this->country,
+            'website' => $this->website,
+            'email' => $this->email,
+            'phone' => $this->phone,
+        ];
+    }
 }

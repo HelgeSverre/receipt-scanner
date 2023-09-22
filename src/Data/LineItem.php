@@ -11,4 +11,14 @@ class LineItem
         public ?float $price,
     ) {
     }
+
+    public function toArray(): array
+    {
+        return [
+            'text' => $this->text,
+            'sku' => $this->sku,
+            'qty' => $this->qty,
+            'price' => $this->price,
+        ];
+    }
 }

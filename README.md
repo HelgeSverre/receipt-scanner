@@ -155,40 +155,60 @@ Kvittering levert av Wolt Norway As til Kongens gate 4, 0153 Oslo, NOR med følg
 Denne kvitteringen er signert digitalt.
 RECEIPT;
 
-$receiptParser->scanText($text)
-
+$receiptParser->scan($text)
 ```
 
-## Testing
+You can modify the model that is being used under the hood by passing a model parameter:
 
-```bash
-composer test
+```php
+
+use HelgeSverre\ReceiptParser\Facades\ReceiptParser;
+use HelgeSverre\ReceiptParser\Enums\Model;
+
+ReceiptParser::scan("receipt here", model: Model::TURBO_INSTRUCT)
 ```
 
-## Notes
+The following models are available:
 
-Using [spatie/pdf-to-text](https://github.com/spatie/pdf-to-text)
+| Enum Value     | String Representation  | Chat/Completion |
+|----------------|------------------------|-----------------|
+| TURBO_INSTRUCT | gpt-3.5-turbo-instruct | Completion      |
+| TURBO_16K      | gpt-3.5-turbo-16k      | Chat            |
+| TURBO          | gpt-3.5-turbo          | Chat            |
+| GPT4           | gpt-4                  | Chat            |
+| GPT4_32K       | gpt-4-32               | Chat            |
 
-Install with composer
+## Cookbook
+
+### Using spatie/pdf-to-text
+
+If you don't want to use Textract for PDFs and such, you may
+use [spatie/pdf-to-text](https://github.com/spatie/pdf-to-text) liek this:
+
+Install it with composer
 
 ```shell
  composer require spatie/pdf-to-text
 ```
 
-Use it like so:
+Then use it like so:
 
 ```php
 
 use HelgeSverre\ReceiptParser;
 use Spatie\PdfToText\Pdf;
 
-$receipt = ReceiptParser::scanText(
+$receipt = ReceiptParser::scan(
     Pdf::getText('receipt.pdf')
 )
 
 dd($receipt);
-
 ```
+
+You have to install `poppler-utils` for this to
+work, [see](https://github.com/spatie/pdf-to-text?tab=readme-ov-file#requirements), note that this only works if your
+PDF is a "real" pdf with actual text inside it, if it is encrypted, is an image scan, or the PDF was generated using
+vector graphics or non-actual-text content, it wont work.
 
 ## License
 
