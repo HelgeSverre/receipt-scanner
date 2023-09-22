@@ -1,62 +1,21 @@
 <p align="center"><img src=".github/header.png"></p>
 
-# AI-Powered Receipt and Invoice Scanner for Data Extraction for Laravel
+# Laravel AI-Powered Receipt and Invoice Scanner
 
 ![Latest Version on Packagist](https://img.shields.io/packagist/v/helgesverre/receipt-parser.svg?style=flat-square)
 ![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/helgesverre/receipt-parser/run-tests.yml?branch=main&label=tests&style=flat-square)
 ![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/helgesverre/receipt-parser/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)
 ![Total Downloads](https://img.shields.io/packagist/dt/helgesverre/receipt-parser.svg?style=flat-square)
 
-Leverage OpenAI's capabilities to easily parse structured receipt data from images, PDFs, and emails within your Laravel
-application.
+Easily extract structured receipt data from images, PDFs, and emails within your Laravel application using OpenAI.
 
-## What does it do?
+## Features
 
-This package accepts text as input, and spits out a class or array of the structured receipt information.
-
-## How does it work?
-
-This package is a light wrapper around the OpenAI Chat and Completion endpoints.
-
-The package includes a prompt that I have tweaked over several months and used in production for parsing uploaded
-grocery receipts in image and PDF formats at [Kassalapp](https://kassal.app).
-
-## Receipt Data Model
-
-The scanned receipt is parsed into a DTO which consists of a main `Receipt` class, which contains the receipt metadata,
-and a `Merchant` dto, representing the seller on the receipt or invoice, and an array of `LineItem` DTOs holding each
-individual line item.
-
-- `HelgeSverre\ReceiptScanner\Data\Receipt`
-- `HelgeSverre\ReceiptScanner\Data\Merchant`
-- `HelgeSverre\ReceiptScanner\Data\LineItem`
-
-The DTO has a `toArray()` method, which will result in a structure like this:
-
-For flexibility, all fields are nullable.
-
-```php
-[
-    "orderRef" => "string",
-    "date" => "date",
-    "taxAmount" => "number",
-    "totalAmount" => "number",
-    "currency" => "string",
-    "merchant" => [
-        "name" => "string",
-        "vatId" => "string",
-        "address" => "string",
-    ],
-    "lineItems" => [
-        [
-            "text" => "string",
-            "sku" => "string",
-            "qty" => "number",
-            "price" => "number",
-        ],
-    ],
-];
-```
+- Light wrapper around OpenAI Chat and Completion endpoints.
+- Accepts text as input and returns structured receipt information.
+- Includes a well-tuned prompt for parsing receipts.
+- Supports various input formats including Plain Text, PDF, Images, Word documents, and Web content.
+- Integrates with [Textract](https://aws.amazon.com/textract/) for OCR functionality.
 
 ## Installation
 
@@ -162,6 +121,43 @@ ReceiptScanner::scan($textWeb)
 ReceiptScanner::scan($textHtml)
 ```
 
+## Receipt Data Model
+
+The scanned receipt is parsed into a DTO which consists of a main `Receipt` class, which contains the receipt metadata,
+and a `Merchant` dto, representing the seller on the receipt or invoice, and an array of `LineItem` DTOs holding each
+individual line item.
+
+- `HelgeSverre\ReceiptScanner\Data\Receipt`
+- `HelgeSverre\ReceiptScanner\Data\Merchant`
+- `HelgeSverre\ReceiptScanner\Data\LineItem`
+
+The DTO has a `toArray()` method, which will result in a structure like this:
+
+For flexibility, all fields are nullable.
+
+```php
+[
+    "orderRef" => "string",
+    "date" => "date",
+    "taxAmount" => "number",
+    "totalAmount" => "number",
+    "currency" => "string",
+    "merchant" => [
+        "name" => "string",
+        "vatId" => "string",
+        "address" => "string",
+    ],
+    "lineItems" => [
+        [
+            "text" => "string",
+            "sku" => "string",
+            "qty" => "number",
+            "price" => "number",
+        ],
+    ],
+];
+```
+
 ## Returning an Array instead of a DTO
 
 If you prefer to work with an array instead of the built-in DTO, you can specify `asArray: true` when calling `scan()`
@@ -175,34 +171,70 @@ ReceiptScanner::scan(
 )
 ```
 
-## All options
+## All parameters and what they do
+
+**`$text` (TextContent|string)**
+
+The input text from the receipt or invoice that needs to be parsed. It accepts either a `TextContent` object or a
+string.
+
+**`$model` (Model)**
+
+This parameter specifies the OpenAI model used for the extraction process.
+
+It accepts a `Model` enum value. The default model is `Model::TURBO_INSTRUCT`. Different models have different
+speed/accuracy characteristics.
+
+Available Models:
+
+- `Model::TURBO_INSTRUCT` – Uses the `gpt-3.5-turbo-instruct` model, Fastest and 7/10 accuracy.
+- `Model::TURBO_16K` – Uses the `gpt-3.5-turbo-16k` model, Fast, 8/10 accuracy, accepts longer input.
+- `Model::TURBO` – Uses the `gpt-3.5-turbo` model, Same, but accepts shorter input.
+- `Model::GPT4` – Uses the `gpt-4` model, Slow, 9.5/10 accuracy.
+- `Model::GPT4_32K` – Uses the `gpt-4-32k` model, Same, but accepts longer input.
+
+**`$maxTokens` (int)**
+
+The maximum number of tokens that the model will processes.
+The default value is `2000`, adjusting this value may be necessary for very long text, but 2000 is "usually" fairly
+good.
+
+**`$temperature` (float)**
+
+Controls the randomness/creativity of the model's output.
+
+A higher value (e.g., 0.8) makes the output more random, which is usually not what we want in this scenario, I usually
+go with 0.1 or 0.2, anything over 0.5 becomes useless. Defaults to `0.1`.
+
+**`$template` (string)**
+
+This parameter specifies the template used for the prompt.
+
+The default template is `'receipt'`. You can create and use
+additional templates by adding new blade files in the `resources/views/vendor/receipt-scanner/` directory and specifying
+the file name (without extension) as the `$template` value (eg: `"minimal_invoice"`.
+
+**`$asArray` (bool)**
+
+If true, returns the response from the AI model as an array instead of as a DTO, useful if you need to modifythe default
+DTO to have more/less fields or want to convert the response into your own DTO, defaults to `false`
+
+### Example Usage:
 
 ```php
 use HelgeSverre\ReceiptScanner\Facades\ReceiptScanner;
 
-ReceiptScanner::scan(
-    TextContent|string $text,
-    Model $model = Model::TURBO_INSTRUCT,
-    int $maxTokens = 2000,
-    float $temperature = 0.1,
-    string $template = 'receipt',
-    bool $asArray = false,
-)
+$parsedReceipt = ReceiptScanner::scan(
+    text: $textInput,
+    model: Model::TURBO_INSTRUCT,
+    maxTokens: 500,
+    temperature: 0.2,
+    template: 'minimal_invoice',
+    asArray: true,
+);
 ```
 
-## Using a different OpenAI model:
-
-If needed, or if your specific use case requires better accuracy or speed, you can change the model that is being used,
-by passing a `model` parameter to the `scan()`
-method:
-
-```php
-use HelgeSverre\ReceiptScanner\Enums\Model;
-
-ReceiptScanner::scan("receipt here", model: Model::TURBO_INSTRUCT)
-```
-
-### List of available models
+### List of supported models
 
 | Enum Value     | Model name             | Endpoint   |
 |----------------|------------------------|------------|
@@ -283,7 +315,6 @@ TEXTRACT_DISK="uploads"
 
 Textract is not available in all regions:
 
-
 > Q: In which AWS regions is Amazon Textract available?
 > Amazon Textract is currently available in the US East (Northern Virginia), US East (Ohio), US West (Oregon), US West (
 > N. California), AWS GovCloud (US-West), AWS GovCloud (US-East), Canada (Central), EU (Ireland), EU (London), EU (
@@ -291,11 +322,11 @@ Textract is not available in all regions:
 > Mumbai)
 > Regions.
 
-Source: https://aws.amazon.com/textract/faqs/
+See: https://aws.amazon.com/textract/faqs/
 
 ## Publishing Prompts
 
-You may publish the prompt file that is used under the hood by runnign this command:
+You may publish the prompt file that is used under the hood by running this command:
 
 ```bash
 php artisan vendor:publish --tag="receipt-scanner-prompts"
@@ -307,7 +338,7 @@ to `ReceiptScanner::scan("text here")`.
 ## Adding prompts/templates
 
 By default, the package uses the `receipt.blade.php` file as its prompt template, you may add additional templates by
-simply creating a blade file in `resources/views/vendor/receipt-scanner/invoice_minimal.blade.php` and changing
+simply creating a blade file in `resources/views/vendor/receipt-scanner/minimal_invoice.blade.php` and changing
 the `$template` parameter when calling `scan()`
 
 **Example prompt:**
@@ -330,7 +361,7 @@ use HelgeSverre\ReceiptScanner\Facades\ReceiptScanner;
 $receipt = ReceiptScanner::scan(
     text: "Your invoice here",
     model:  Model::TURBO_INSTRUCT,
-    template: 'invoice_minimal',
+    template: 'minimal_invoice',
     asArray: true,
 );
 ```
