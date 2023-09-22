@@ -2,7 +2,7 @@
 
 use HelgeSverre\ReceiptScanner\Data\Receipt;
 use HelgeSverre\ReceiptScanner\Enums\Model;
-use HelgeSverre\ReceiptScanner\Facades\ReceiptParser;
+use HelgeSverre\ReceiptScanner\Facades\ReceiptScanner;
 use HelgeSverre\ReceiptScanner\Prompt;
 use HelgeSverre\ReceiptScanner\TextLoader\TextractOcr;
 use Illuminate\Http\UploadedFile;
@@ -32,7 +32,7 @@ it('validates parsing of receipt data into dto', function () {
     ]);
 
     $text = file_get_contents(__DIR__.'/samples/wolt-pizza-norwegian.txt');
-    $result = ReceiptParser::scan($text, model: Model::TURBO);
+    $result = ReceiptScanner::scan($text, model: Model::TURBO);
 
     expect($result)->toBeInstanceOf(Receipt::class)
         ->and($result->totalAmount)->toBe(568.00)
@@ -58,7 +58,7 @@ it('validates parsing of receipt data into dto', function () {
 it('confirms real world usability with TURBO 16K model', function () {
 
     $text = file_get_contents(__DIR__.'/samples/wolt-pizza-norwegian.txt');
-    $result = ReceiptParser::scan($text, model: Model::TURBO_16K);
+    $result = ReceiptScanner::scan($text, model: Model::TURBO_16K);
 
     expect($result)->toBeInstanceOf(Receipt::class)
         ->and($result->totalAmount)->toBe(568.00)
@@ -93,7 +93,7 @@ it('validates returning parsed receipt as array', function () {
     ]);
 
     $text = file_get_contents(__DIR__.'/samples/wolt-pizza-norwegian.txt');
-    $result = ReceiptParser::scan($text, model: Model::TURBO_INSTRUCT, asArray: true);
+    $result = ReceiptScanner::scan($text, model: Model::TURBO_INSTRUCT, asArray: true);
 
     expect($result)->toBeArray()
         ->and($result['totalAmount'])->toBe(568.00)
@@ -109,7 +109,7 @@ it('validates returning parsed receipt as array', function () {
 it('confirms real world usability with default model', function () {
 
     $text = file_get_contents(__DIR__.'/samples/wolt-pizza-norwegian.txt');
-    $result = ReceiptParser::scan($text);
+    $result = ReceiptScanner::scan($text);
 
     expect($result)->toBeInstanceOf(Receipt::class)
         ->and($result->totalAmount)->toBe(568.00)
@@ -137,7 +137,7 @@ it('validates ocr functionality with image input', function () {
     /** @var TextractOcr $ocr */
     $ocr = resolve(TextractOcr::class);
     $text = $ocr->load($image);
-    $result = ReceiptParser::scan($text);
+    $result = ReceiptScanner::scan($text);
     expect($result)->toBeInstanceOf(Receipt::class)
         ->and($result->totalAmount)->toBe(852.00)
         ->and($result->orderRef)->toBe('66907')

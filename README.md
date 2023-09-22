@@ -151,7 +151,7 @@ After loading, you can pass the `TextContent` or the plain text (by calling `->t
 the `ReceiptScanner::scan()` method.
 
 ```php
-use HelgeSverre\ReceiptScanner\Facades\ReceiptParser;
+use HelgeSverre\ReceiptScanner\Facades\ReceiptScanner;
 
 ReceiptScanner::scan($textPlainText)
 ReceiptScanner::scan($textPdf)
@@ -167,7 +167,7 @@ ReceiptScanner::scan($textHtml)
 If you prefer to work with an array instead of the built-in DTO, you can specify `asArray: true` when calling `scan()`
 
 ```php
-use HelgeSverre\ReceiptScanner\Facades\ReceiptParser;
+use HelgeSverre\ReceiptScanner\Facades\ReceiptScanner;
 
 ReceiptScanner::scan(
     $textPlainText
@@ -178,7 +178,7 @@ ReceiptScanner::scan(
 ## All options
 
 ```php
-use HelgeSverre\ReceiptScanner\Facades\ReceiptParser;
+use HelgeSverre\ReceiptScanner\Facades\ReceiptScanner;
 
 ReceiptScanner::scan(
     TextContent|string $text,
@@ -310,7 +310,7 @@ By default, the package uses the `receipt.blade.php` file as its prompt template
 simply creating a blade file and changingg the `$template` parameter when calling `scan()`
 
 ```php
-use HelgeSverre\ReceiptScanner\Facades\ReceiptParser;
+use HelgeSverre\ReceiptScanner\Facades\ReceiptScanner;
 
 $receipt = ReceiptScanner::scan(
     TextContent|string $text,
