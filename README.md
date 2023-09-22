@@ -2,8 +2,8 @@
 
 # AI-Powered Receipt and Invoice Scanner for Laravel
 
-![Latest Version on Packagist](https://img.shields.io/packagist/v/helgesverre/receipt-parser.svg?style=flat-square)
-![Total Downloads](https://img.shields.io/packagist/dt/helgesverre/receipt-parser.svg?style=flat-square)
+![Latest Version on Packagist](https://img.shields.io/packagist/v/helgesverre/receipt-scanner.svg?style=flat-square)
+![Total Downloads](https://img.shields.io/packagist/dt/helgesverre/receipt-scanner.svg?style=flat-square)
 
 Easily extract structured receipt data from images, PDFs, and emails within your Laravel application using OpenAI.
 
@@ -247,7 +247,7 @@ $parsedReceipt = ReceiptScanner::scan(
 Publish the config file:
 
 ```bash
-php artisan vendor:publish --tag="receipt-parser-config"
+php artisan vendor:publish --tag="receipt-scanner-config"
 ```
 
 This will publish the following configuration:
@@ -294,7 +294,7 @@ open your  `config/filesystems.php` configuration file and add the following:
 ],
 ```
 
-Ensure the `textract_disk` setting in `config/receipt-parser.php` is the same as your disk name in the `filesystems.php`
+Ensure the `textract_disk` setting in `config/receipt-scanner.php` is the same as your disk name in the `filesystems.php`
 config, you can change it with the .env value `TEXTRACT_DISK`.
 
 ```php
