@@ -162,6 +162,34 @@ ReceiptScanner::scan($textWeb)
 ReceiptScanner::scan($textHtml)
 ```
 
+## Returning an Array instead of a DTO
+
+If you prefer to work with an array instead of the built-in DTO, you can specify `asArray: true` when calling `scan()`
+
+```php
+use HelgeSverre\ReceiptScanner\Facades\ReceiptParser;
+
+ReceiptScanner::scan(
+    $textPlainText
+    asArray: true
+)
+```
+
+## All options
+
+```php
+use HelgeSverre\ReceiptScanner\Facades\ReceiptParser;
+
+ReceiptScanner::scan(
+    TextContent|string $text,
+    Model $model = Model::TURBO_INSTRUCT,
+    int $maxTokens = 2000,
+    float $temperature = 0.1,
+    string $template = 'receipt',
+    bool $asArray = false,
+)
+```
+
 ## Using a different OpenAI model:
 
 If needed, or if your specific use case requires better accuracy or speed, you can change the model that is being used,
@@ -275,6 +303,21 @@ php artisan vendor:publish --tag="receipt-scanner-views"
 
 This package simply uses blade files as prompts, the `{{ $context }}` variable will be replaced by the text you pass
 to `ReceiptScanner::scan("text here")`.
+
+## Adding prompts/templates
+
+By default, the package uses the `receipt.blade.php` file as its prompt template, you may add additional templates by
+simply creating a blade file and changingg the `$template` parameter when calling `scan()`
+
+```php
+use HelgeSverre\ReceiptScanner\Facades\ReceiptParser;
+
+$receipt = ReceiptScanner::scan(
+    TextContent|string $text,
+    Model $model = Model::TURBO_INSTRUCT,
+    string $template = 'invoice_minimal',
+);
+```
 
 ## License
 
