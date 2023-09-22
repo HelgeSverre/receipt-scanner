@@ -11,41 +11,73 @@ use OpenAI\Responses\Completions\CreateResponse as CompletionResponse;
 
 class ReceiptParser
 {
-    public function scan(TextContent|string $text, Model $model = Model::TURBO_INSTRUCT, int $maxTokens = 2000, float $temperature = 0.1): ?Receipt
-    {
+    public function raw(
+        array $data = [],
+        Model $model = Model::TURBO_INSTRUCT,
+        int $maxTokens = 2000,
+        float $temperature = 0.1,
+        string $template = 'receipt',
+    ): array {
+        $response = $this->sendRequest(
+            prompt: Prompt::load($template, $data),
+            params: [
+                'model' => $model->value,
+                'max_tokens' => $maxTokens,
+                'temperature' => $temperature,
+            ],
+            model: $model
+        );
 
-        $prompt = Prompt::load('receipt_v2')->replace('[REPLACE_TEXT]', $text)->toString();
-
-        $params = [
-            'model' => $model->value,
-            'max_tokens' => $maxTokens,
-            'temperature' => $temperature,
-        ];
-
-        $response = $model->isCompletion()
-            ? OpenAI::completions()->create([...$params, 'prompt' => $prompt])
-            : OpenAI::chat()->create([...$params, 'messages' => [['role' => 'user', 'content' => $prompt]]]);
-
-        return $this->responseToDto($response);
+        return $this->parseResponse($response);
     }
 
-    protected function responseToDto(ChatResponse|CompletionResponse $response): ?Receipt
+    public function scan(
+        TextContent|string $text,
+        Model $model = Model::TURBO_INSTRUCT,
+        int $maxTokens = 2000,
+        float $temperature = 0.1,
+        string $template = 'receipt',
+        bool $asArray = false,
+    ): Receipt|array {
+        $response = $this->sendRequest(
+            prompt: Prompt::load($template, ['context' => $text]),
+            params: [
+                'model' => $model->value,
+                'max_tokens' => $maxTokens,
+                'temperature' => $temperature,
+            ],
+            model: $model
+        );
+
+        $data = $this->parseResponse($response);
+
+        return $asArray ? $data : Receipt::fromJson($data);
+    }
+
+    protected function sendRequest(string $prompt, array $params, Model $model): ChatResponse|CompletionResponse
     {
-        $text = match (true) {
-            $response instanceof ChatResponse => $response->choices[0]->message->content,
-            $response instanceof CompletionResponse => $response->choices[0]->text,
-        };
+        return $model->isCompletion()
+            ? OpenAI::completions()->create(array_merge($params, ['prompt' => $prompt]))
+            : OpenAI::chat()->create(array_merge($params, ['messages' => [['role' => 'user', 'content' => $prompt]]]));
+    }
 
-        $json = json_decode($text, true);
+    protected function parseResponse(ChatResponse|CompletionResponse $response): array
+    {
+        $json = $this->extractResponseText($response);
 
-        if ($json === null) {
+        $decoded = json_decode($json, true);
 
-            throw new InvalidJsonReturnedError("Invalid JSON returned: $text");
+        if ($decoded === null) {
+            throw new InvalidJsonReturnedError("Invalid JSON returned:\n$json");
         }
 
-        // TODO: Attempt to "fix" json by calling openai again, or using a package that handles broken json
+        return $decoded;
+    }
 
-        return Receipt::fromJson($json);
-
+    protected function extractResponseText(ChatResponse|CompletionResponse $response): string
+    {
+        return $response instanceof ChatResponse
+            ? $response->choices[0]->message->content
+            : $response->choices[0]->text;
     }
 }

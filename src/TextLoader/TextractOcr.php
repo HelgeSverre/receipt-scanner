@@ -27,7 +27,7 @@ class TextractOcr implements TextLoader
 
                 // todo: copy to s3 storage automatically and generate s3 object
                 if (config('receipt-parser.textract_disk')) {
-                    $path = sprintf('%s/%s', app()->environment(), Str::afterLast($receipt->image, '/'));
+                    $path = sprintf('receipt-parser/%s.pdf', Str::uuid());
 
                     $disk = config('receipt-parser.textract_disk');
 

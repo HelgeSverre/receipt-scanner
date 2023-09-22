@@ -17,13 +17,14 @@ class ReceiptParserServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('receipt-parser')
-            ->hasViews()
             ->hasConfigFile();
 
     }
 
-    public function bootingPackage()
+    public function packageBooted()
     {
+
+        $this->loadViewsFrom($this->package->basePath('/../prompts'), 'receipt-parser');
 
         $this->app->bind(TextractClient::class, function () {
             return new TextractClient([
