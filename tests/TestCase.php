@@ -26,7 +26,7 @@ class TestCase extends Orchestra
 
         config()->set('database.default', 'testing');
 
-        config()->set('openai.api_key', env('OPENAI_KEY'));
+        config()->set('openai.api_key', env('OPENAI_API_KEY'));
 
         config()->set('receipt-scanner.textract_region', env('TEXTRACT_REGION'));
         config()->set('receipt-scanner.textract_version', env('TEXTRACT_VERSION'));
