@@ -3,8 +3,6 @@
 # AI-Powered Receipt and Invoice Scanner for Laravel
 
 ![Latest Version on Packagist](https://img.shields.io/packagist/v/helgesverre/receipt-parser.svg?style=flat-square)
-![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/helgesverre/receipt-parser/run-tests.yml?branch=main&label=tests&style=flat-square)
-![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/helgesverre/receipt-parser/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)
 ![Total Downloads](https://img.shields.io/packagist/dt/helgesverre/receipt-parser.svg?style=flat-square)
 
 Easily extract structured receipt data from images, PDFs, and emails within your Laravel application using OpenAI.
