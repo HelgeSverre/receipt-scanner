@@ -1,6 +1,6 @@
 <p align="center"><img src=".github/header.png"></p>
 
-# Laravel AI-Powered Receipt and Invoice Scanner
+# AI-Powered Receipt and Invoice Scanner for Laravel
 
 ![Latest Version on Packagist](https://img.shields.io/packagist/v/helgesverre/receipt-parser.svg?style=flat-square)
 ![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/helgesverre/receipt-parser/run-tests.yml?branch=main&label=tests&style=flat-square)
