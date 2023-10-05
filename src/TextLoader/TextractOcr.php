@@ -84,7 +84,7 @@ class TextractOcr implements TextLoader
 
     protected function getBucket(string $disk): string
     {
-        $bucket = config("filesystems.$disk.bucket");
+        $bucket = config("filesystems.disks.$disk.bucket");
         if (! $bucket) {
             throw new Exception("Bucket is not defined in disk '$disk'");
         }
