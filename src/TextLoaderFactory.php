@@ -11,8 +11,8 @@ use HelgeSverre\ReceiptScanner\TextLoader\TextractUsingS3Upload;
 use HelgeSverre\ReceiptScanner\TextLoader\Web;
 use HelgeSverre\ReceiptScanner\TextLoader\Word;
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Support\Traits\Macroable;
 use InvalidArgumentException;
-use Spatie\Macroable\Macroable;
 
 class TextLoaderFactory
 {
