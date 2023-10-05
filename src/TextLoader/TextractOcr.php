@@ -74,32 +74,20 @@ class TextractOcr implements TextLoader
 
     protected function getDisk(): string
     {
-        $disk = config('receipt-scanner.textract_disk');
-        if (! $disk) {
-            throw new Exception("Configuration option 'receipt-scanner.textract_disk' is not set, it is required for OCR-ing PDFs");
-        }
-
-        return $disk;
+        return config('receipt-scanner.textract_disk') ?: throw new Exception("Configuration option 'receipt-scanner.textract_disk' is not set, it is required for OCR-ing PDFs");
     }
 
     protected function getBucket(string $disk): string
     {
-        $bucket = config("filesystems.disks.$disk.bucket");
-        if (! $bucket) {
-            throw new Exception("Bucket is not defined in disk '$disk'");
-        }
-
-        return $bucket;
+        return config("filesystems.disks.$disk.bucket") ?: throw new Exception("Bucket is not defined in disk '$disk'");
     }
 
     protected function storeFile(string $disk, UploadedFile $file): string
     {
+        // TODO: Make path generation configurable, however this is sufficiently random to not cause collisions in any realistic scenario.
         $path = sprintf('receipt-scanner/%s.pdf', Str::uuid());
         $success = Storage::disk($disk)->put($path, $file->getContent());
-        if (! $success) {
-            throw new Exception('Could not store the file in the textract s3 bucket.');
-        }
 
-        return $path;
+        return $success ? $path : throw new Exception('Could not store the file in the textract s3 bucket.');
     }
 }
