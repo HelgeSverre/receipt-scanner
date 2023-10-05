@@ -23,10 +23,15 @@ Install the package via composer:
 composer require helgesverre/receipt-scanner
 ```
 
-This package uses the [OpenAI Laravel Package](https://github.com/openai-php/laravel), so you need to add the
+This package uses the [OpenAI Laravel Package](https://github.com/openai-php/laravel), so you need to publish their
+config and add the
 following to your `.env` file:
 
+```shell
+php artisan vendor:publish --provider="OpenAI\Laravel\ServiceProvider"
 ```
+
+```dotenv
 OPENAI_API_KEY="your-key-here
 ```
 
