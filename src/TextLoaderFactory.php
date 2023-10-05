@@ -6,17 +6,20 @@ use HelgeSverre\ReceiptScanner\Contracts\TextLoader;
 use HelgeSverre\ReceiptScanner\TextLoader\Html;
 use HelgeSverre\ReceiptScanner\TextLoader\Pdf;
 use HelgeSverre\ReceiptScanner\TextLoader\Text;
-use HelgeSverre\ReceiptScanner\TextLoader\TextractOcr;
+use HelgeSverre\ReceiptScanner\TextLoader\Textract;
+use HelgeSverre\ReceiptScanner\TextLoader\TextractUsingS3Upload;
 use HelgeSverre\ReceiptScanner\TextLoader\Web;
 use HelgeSverre\ReceiptScanner\TextLoader\Word;
 use Illuminate\Contracts\Container\Container;
 use InvalidArgumentException;
+use Spatie\Macroable\Macroable;
 
 class TextLoaderFactory
 {
-    public function __construct(Container $container)
+    use Macroable;
+
+    public function __construct(protected Container $container)
     {
-        $this->container = $container;
     }
 
     public function create(string $type): TextLoader
@@ -25,7 +28,8 @@ class TextLoaderFactory
             'html' => $this->container->make(Html::class),
             'pdf' => $this->container->make(Pdf::class),
             'text' => $this->container->make(Text::class),
-            'textract' => $this->container->make(TextractOcr::class),
+            'textract_s3' => $this->container->make(TextractUsingS3Upload::class),
+            'textract' => $this->container->make(Textract::class),
             'web' => $this->container->make(Web::class),
             'word' => $this->container->make(Word::class),
             default => throw new InvalidArgumentException("Invalid text loader type: $type"),
@@ -33,33 +37,38 @@ class TextLoaderFactory
     }
 
     // Convenience Methods
-    public function html(): Html
+    public function html(mixed $data): ?TextContent
     {
-        return $this->create('html');
+        return $this->create('html')->load($data);
     }
 
-    public function pdf(): Pdf
+    public function pdf(mixed $data): ?TextContent
     {
-        return $this->create('pdf');
+        return $this->create('pdf')->load($data);
     }
 
-    public function text(): Text
+    public function text(mixed $data): ?TextContent
     {
-        return $this->create('text');
+        return $this->create('text')->load($data);
     }
 
-    public function textract(): TextractOcr
+    public function textractUsingS3Upload(mixed $data): ?TextContent
     {
-        return $this->create('textract');
+        return $this->create('textract_s3')->load($data);
     }
 
-    public function web(): Web
+    public function textract(mixed $data): ?TextContent
     {
-        return $this->create('web');
+        return $this->create('textract')->load($data);
     }
 
-    public function word(): Word
+    public function web(mixed $data): ?TextContent
     {
-        return $this->create('word');
+        return $this->create('web')->load($data);
+    }
+
+    public function word(mixed $data): ?TextContent
+    {
+        return $this->create('word')->load($data);
     }
 }

@@ -13,7 +13,7 @@ enum Model: string
 
     // Smarter, slower
     case GPT4 = 'gpt-4';
-    case GPT4_32K = 'gpt-4-32';
+    case GPT4_32K = 'gpt-4-32k';
 
     public function isCompletion(): bool
     {

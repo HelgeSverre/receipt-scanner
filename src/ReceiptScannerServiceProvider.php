@@ -10,15 +10,7 @@ class ReceiptScannerServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
-        $package
-            ->name('receipt-scanner')
-            ->hasConfigFile();
-
+        $package->name('receipt-scanner')->hasConfigFile();
     }
 
     public function packageBooted()
@@ -32,15 +24,13 @@ class ReceiptScannerServiceProvider extends PackageServiceProvider
 
         $this->app->singleton(TextLoaderFactory::class, fn ($app) => new TextLoaderFactory($app));
 
-        $this->app->bind(TextractClient::class, function () {
-            return new TextractClient([
-                'region' => config('receipt-scanner.textract_region'),
-                'version' => config('receipt-scanner.textract_version'),
-                'credentials' => [
-                    'key' => config('receipt-scanner.textract_key'),
-                    'secret' => config('receipt-scanner.textract_secret'),
-                ],
-            ]);
-        });
+        $this->app->bind(TextractClient::class, fn () => new TextractClient([
+            'region' => config('receipt-scanner.textract_region'),
+            'version' => config('receipt-scanner.textract_version'),
+            'credentials' => [
+                'key' => config('receipt-scanner.textract_key'),
+                'secret' => config('receipt-scanner.textract_secret'),
+            ],
+        ]));
     }
 }

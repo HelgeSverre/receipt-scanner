@@ -1,10 +1,10 @@
 <?php
 
-use HelgeSverre\ReceiptScanner\Facades\TextLoader;
+use HelgeSverre\ReceiptScanner\Facades\Text;
 use HelgeSverre\ReceiptScanner\TextContent;
 
 it('Can load Text', function () {
-    $text = TextLoader::text()->load(file_get_contents(__DIR__.'/samples/wolt-pizza-norwegian.txt'));
+    $text = Text::text(file_get_contents(__DIR__.'/samples/wolt-pizza-norwegian.txt'));
 
     expect($text)->toBeInstanceOf(TextContent::class)->and($text->toString())->toContain(
         'Helge Sverre Hessevik Liseth',
@@ -14,7 +14,7 @@ it('Can load Text', function () {
 });
 
 it('Can load PDFs', function () {
-    $text = TextLoader::pdf()->load(file_get_contents(__DIR__.'/samples/laravel-certification-invoice.pdf'));
+    $text = Text::pdf(file_get_contents(__DIR__.'/samples/laravel-certification-invoice.pdf'));
 
     expect($text)->toBeInstanceOf(TextContent::class)->and($text->toString())->toContain(
         'contact@laravelcert.com',
@@ -23,7 +23,7 @@ it('Can load PDFs', function () {
 });
 
 it('Can OCR images', function () {
-    $text = TextLoader::textract()->load(file_get_contents(__DIR__.'/samples/grocery-receipt-norwegian-spar.jpg'));
+    $text = Text::textract(file_get_contents(__DIR__.'/samples/grocery-receipt-norwegian-spar.jpg'));
 
     expect($text)->toBeInstanceOf(TextContent::class)->and($text->toString())->toContain(
         'TOMATER',
@@ -34,7 +34,7 @@ it('Can OCR images', function () {
 });
 
 it('Can OCR Pdfs', function () {
-    $text = TextLoader::textract()->load(file_get_contents(__DIR__.'/samples/laravel-certification-invoice.pdf'));
+    $text = Text::textractUsingS3Upload(file_get_contents(__DIR__.'/samples/laravel-certification-invoice.pdf'));
 
     expect($text)->toBeInstanceOf(TextContent::class)->and($text->toString())->toContain(
         'contact@laravelcert.com',
@@ -43,7 +43,7 @@ it('Can OCR Pdfs', function () {
 });
 
 it('Can load Word Documents', function () {
-    $text = TextLoader::word()->load(file_get_contents(__DIR__.'/samples/word-document.doc'));
+    $text = Text::word(file_get_contents(__DIR__.'/samples/word-document.doc'));
 
     expect($text)->toBeInstanceOf(TextContent::class)->and($text->toString())->toContain(
         'Mauris',
@@ -51,7 +51,7 @@ it('Can load Word Documents', function () {
 });
 
 it('Can load text from website', function () {
-    $text = TextLoader::web()->load('https://sparksuite.github.io/simple-html-invoice-template/');
+    $text = Text::web('https://sparksuite.github.io/simple-html-invoice-template/');
 
     expect($text)->toBeInstanceOf(TextContent::class)->and($text->toString())->toContain(
         'Sparksuite',
@@ -60,7 +60,7 @@ it('Can load text from website', function () {
 });
 
 it('Can load html files', function () {
-    $text = TextLoader::html()->load(file_get_contents(__DIR__.'/samples/paddle-fake-subscription.html'));
+    $text = Text::html(file_get_contents(__DIR__.'/samples/paddle-fake-subscription.html'));
 
     expect($text)->toBeInstanceOf(TextContent::class)->and($text->toString())->toContain(
         'Thank you for your purchase!',

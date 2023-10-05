@@ -20,6 +20,7 @@
         "ext-zip": "*",
         "aws/aws-sdk-php": "^3.281",
         "illuminate/contracts": "^10.0",
+        "league/flysystem-aws-s3-v3": "^3.16",
         "openai-php/laravel": "^0.7.0",
         "prinsfrank/standards": "^2.1",
         "smalot/pdfparser": "*",
@@ -88,7 +89,7 @@
             ],
             "aliases": {
                 "ReceiptScanner": "HelgeSverre\\ReceiptScanner\\Facades\\ReceiptScanner",
-                "Textloader": "HelgeSverre\\ReceiptScanner\\Facades\\TextLoader"
+                "Text": "HelgeSverre\\ReceiptScanner\\Facades\\Text"
             }
         }
     },

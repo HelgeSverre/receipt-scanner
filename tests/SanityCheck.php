@@ -4,9 +4,10 @@ use HelgeSverre\ReceiptScanner\Data\Receipt;
 use HelgeSverre\ReceiptScanner\Enums\Model;
 use HelgeSverre\ReceiptScanner\Facades\ReceiptScanner;
 use HelgeSverre\ReceiptScanner\Prompt;
-use HelgeSverre\ReceiptScanner\TextLoader\TextractOcr;
+use HelgeSverre\ReceiptScanner\TextContent;
+use HelgeSverre\ReceiptScanner\TextLoader\Textract;
+use HelgeSverre\ReceiptScanner\TextLoader\TextractUsingS3Upload;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use OpenAI\Laravel\Facades\OpenAI;
@@ -46,7 +47,6 @@ it('validates parsing of receipt data into dto', function () {
 
     $expectedResult = json_decode(file_get_contents(__DIR__.'/samples/wolt-pizza-norwegian.json'), true);
 
-    // Asserting line items
     foreach ($result->lineItems as $index => $lineItem) {
         expect($lineItem->text)->toBe($expectedResult['lineItems'][$index]['text'], "was '{$lineItem->text}' instead")
             ->and((float) $lineItem->qty)->toBe((float) $expectedResult['lineItems'][$index]['qty'], "was '{$lineItem->qty}' instead")
@@ -55,7 +55,7 @@ it('validates parsing of receipt data into dto', function () {
     }
 });
 
-it('confirms real world usability with TURBO 16K model', function () {
+it('confirms real world usability with Turbo Instruct 16K model', function () {
 
     $text = file_get_contents(__DIR__.'/samples/wolt-pizza-norwegian.txt');
     $result = ReceiptScanner::scan($text, model: Model::TURBO_16K);
@@ -71,7 +71,6 @@ it('confirms real world usability with TURBO 16K model', function () {
         ->and($result->merchant->address)->toBe('Conrad Mohrs veg 5, 5068 Bergen, NOR');
     $expectedResult = json_decode(file_get_contents(__DIR__.'/samples/wolt-pizza-norwegian.json'), true);
 
-    // Asserting line items
     foreach ($result->lineItems as $index => $lineItem) {
         expect($lineItem->text)->toBe($expectedResult['lineItems'][$index]['text'])
             ->and((float) $lineItem->qty)->toBe((float) $expectedResult['lineItems'][$index]['qty'])
@@ -123,7 +122,6 @@ it('confirms real world usability with default model', function () {
 
     $expectedResult = json_decode(file_get_contents(__DIR__.'/samples/wolt-pizza-norwegian.json'), true);
 
-    // Asserting line items
     foreach ($result->lineItems as $index => $lineItem) {
         expect(Str::contains($expectedResult['lineItems'][$index]['text'], $lineItem->text))->toBeTrue()
             ->and((float) $lineItem->qty)->toBe((float) $expectedResult['lineItems'][$index]['qty'])
@@ -134,8 +132,8 @@ it('confirms real world usability with default model', function () {
 
 it('validates ocr functionality with image input', function () {
     $image = file_get_contents(__DIR__.'/samples/grocery-receipt-norwegian-spar.jpg');
-    /** @var TextractOcr $ocr */
-    $ocr = resolve(TextractOcr::class);
+
+    $ocr = resolve(Textract::class);
     $text = $ocr->load($image);
     $result = ReceiptScanner::scan($text);
     expect($result)->toBeInstanceOf(Receipt::class)
@@ -153,30 +151,26 @@ it('loads prompts and injects context into blade files', function () {
         ->and(Str::contains($prompt, 'hello world'))->toBeTrue();
 });
 
-it('throws exception for missing configuration', function () {
-    Config::set('receipt-parser.textract_disk', null);
-    /** @var TextractOcr $ocr */
-    $ocr = resolve(TextractOcr::class);
+it('can load a pdf via s3', function () {
+    $ocr = resolve(TextractUsingS3Upload::class);
 
-    // Create a mock UploadedFile instance for a PDF
-    $pdfFile = UploadedFile::fake()->create('document.pdf');
+    $pdfFile = file_get_contents(__DIR__.'/samples/wolt-food-delivery.pdf');
 
-    // Expect an exception to be thrown
-    $this->expectException(Exception::class);
-    $this->expectExceptionMessage('is not set, it is required for OCR-ing PDFs');
-    $this->expectExceptionMessage('Configuration option');
-    $ocr->load($pdfFile);
+    $text = $ocr->load($pdfFile);
+
+    expect($text)->toBeInstanceOf(TextContent::class)
+        ->and(Str::contains($text, 'Helge Sverre Hessevik Liseth'))->toBeTrue()
+        ->and(Str::contains($text, '651852288660ad9ab17636df'))->toBeTrue();
+
 });
 
 it('throws exception when storage operation fails', function () {
     Storage::shouldReceive('disk->put')->andReturn(false);
-    /** @var TextractOcr $ocr */
-    $ocr = resolve(TextractOcr::class);
 
-    // Create a mock UploadedFile instance
+    $ocr = resolve(TextractUsingS3Upload::class);
+
     $file = UploadedFile::fake()->create('document.pdf');
 
-    // Expect an exception to be thrown
     $this->expectException(Exception::class);
     $ocr->load($file);
 });

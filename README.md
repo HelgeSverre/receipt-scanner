@@ -68,43 +68,18 @@ ReceiptScanner::scan($text);
 ### Extracting data from other formats
 
 ```php
-use HelgeSverre\ReceiptScanner\Facades\TextLoader;
+use HelgeSverre\ReceiptScanner\Facades\Text;
 
-// Load and parse plain text from a file.
-$textPlainText = TextLoader::text()->load(
-    file_get_contents('./receipt.txt')
-);
-
-// Load and parse PDF content.
-$textPdf = TextLoader::pdf()->load(
-    file_get_contents('./receipt.pdf')
-);
-
-// OCR: Extract and parse text from an image.
-$textImageOcr = TextLoader::textract()->load(
-    file_get_contents('./receipt.jpg')
-);
-
-// OCR: Extract and parse text from a PDF.
-$textPdfOcr = TextLoader::textract()->load(
-    file_get_contents('./receipt.pdf')
-);
-
-// Load and parse text from a Word document.
-$textWord = TextLoader::word()->load(
-    file_get_contents('./receipt.doc')
-);
-
-// Load and parse text content from a website.
-$textWeb = TextLoader::web()->load('https://example.com');
-
-// Load and parse text content from an HTML file.
-$textHtml = TextLoader::html()->load(
-    file_get_contents('./receipt.html')
-);
+$textPlainText = Text::text(file_get_contents('./receipt.txt'));
+$textPdf = Text::pdf(file_get_contents('./receipt.pdf'));
+$textImageOcr = Text::textract(file_get_contents('./receipt.jpg'));
+$textPdfOcr = Text::textractUsingS3Upload(file_get_contents('./receipt.pdf'));
+$textWord = Text::word(file_get_contents('./receipt.doc'));
+$textWeb = Text::web('https://example.com');
+$textHtml = Text::html(file_get_contents('./receipt.html'));
 ```
 
-After loading, you can pass the `TextContent` or the plain text (by calling `->toString()`) into
+After loading, you can pass the `TextContent` or the plain text (which can be retrieved by calling `->toString()`) into
 the `ReceiptScanner::scan()` method.
 
 ```php
@@ -250,20 +225,7 @@ Publish the config file:
 php artisan vendor:publish --tag="receipt-scanner-config"
 ```
 
-This will publish the following configuration:
-
-```php
-return [
-    'use_forgiving_number_parser' => env('USE_FORGIVING_NUMBER_PARSER', true),
-    "textract_disk" => env("TEXTRACT_DISK")
-  
-    // IAM credentials for Textract user
-    'textract_key' => env('TEXTRACT_KEY'),
-    'textract_secret' => env('TEXTRACT_SECRET'),
-    'textract_region' => env('TEXTRACT_REGION'),
-    'textract_version' => env('TEXTRACT_VERSION', '2018-06-27'),
-];
-```
+All the configuration options are documented in the configuration file.
 
 ## OCR Configuration with AWS Textract
 
@@ -294,7 +256,8 @@ open your  `config/filesystems.php` configuration file and add the following:
 ],
 ```
 
-Ensure the `textract_disk` setting in `config/receipt-scanner.php` is the same as your disk name in the `filesystems.php`
+Ensure the `textract_disk` setting in `config/receipt-scanner.php` is the same as your disk name in
+the `filesystems.php`
 config, you can change it with the .env value `TEXTRACT_DISK`.
 
 ```php
@@ -342,7 +305,7 @@ the `$template` parameter when calling `scan()`
 **Example prompt:**
 
 ```blade
-Extract the following fields from the text blow, output as JSON
+Extract the following fields from the text below, output as JSON
 
 date (as string in the  Y-m-d format)
 total_amount (as float, do not include currency symbol) 

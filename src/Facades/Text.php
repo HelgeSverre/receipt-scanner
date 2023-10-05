@@ -2,15 +2,16 @@
 
 namespace HelgeSverre\ReceiptScanner\Facades;
 
+use HelgeSverre\ReceiptScanner\TextLoaderFactory;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \HelgeSverre\ReceiptScanner\TextLoaderFactory
+ * @see TextLoaderFactory
  */
-class TextLoader extends Facade
+class Text extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return \HelgeSverre\ReceiptScanner\TextLoaderFactory::class;
+        return TextLoaderFactory::class;
     }
 }
