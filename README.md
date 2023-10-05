@@ -23,6 +23,13 @@ Install the package via composer:
 composer require helgesverre/receipt-scanner
 ```
 
+This package uses the [OpenAI Laravel Package](https://github.com/openai-php/laravel), so you need to add the
+following to your `.env` file:
+
+```
+OPENAI_API_KEY="your-key-here
+```
+
 ## Usage
 
 ### Extracting receipt data from Plain Text
