@@ -23,9 +23,16 @@ Install the package via composer:
 composer require helgesverre/receipt-scanner
 ```
 
-This package uses the [OpenAI Laravel Package](https://github.com/openai-php/laravel), so you need to publish their
-config and add the
-following to your `.env` file:
+Publish the config file:
+
+```bash
+php artisan vendor:publish --tag="receipt-scanner-config"
+```
+
+All the configuration options are documented in the configuration file.
+
+Since this package uses the [OpenAI Laravel Package](https://github.com/openai-php/laravel), so you also need to publish
+their config and add the `OPENAI_API_KEY` to your `.env` file:
 
 ```shell
 php artisan vendor:publish --provider="OpenAI\Laravel\ServiceProvider"
@@ -228,16 +235,6 @@ $parsedReceipt = ReceiptScanner::scan(
 | TURBO          | gpt-3.5-turbo          | Chat       |
 | GPT4           | gpt-4                  | Chat       |
 | GPT4_32K       | gpt-4-32               | Chat       |
-
-## Configuration
-
-Publish the config file:
-
-```bash
-php artisan vendor:publish --tag="receipt-scanner-config"
-```
-
-All the configuration options are documented in the configuration file.
 
 ## OCR Configuration with AWS Textract
 
