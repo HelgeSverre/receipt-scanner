@@ -20,6 +20,7 @@
         "ext-zip": "*",
         "aws/aws-sdk-php": "^3.281",
         "illuminate/contracts": "^10.0",
+        "jstewmc/rtf": "^0.5.2",
         "league/flysystem-aws-s3-v3": "^3.16",
         "openai-php/laravel": "^0.7.0",
         "prinsfrank/standards": "^2.1",

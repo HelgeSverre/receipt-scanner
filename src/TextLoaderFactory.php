@@ -5,6 +5,7 @@ namespace HelgeSverre\ReceiptScanner;
 use HelgeSverre\ReceiptScanner\Contracts\TextLoader;
 use HelgeSverre\ReceiptScanner\TextLoader\Html;
 use HelgeSverre\ReceiptScanner\TextLoader\Pdf;
+use HelgeSverre\ReceiptScanner\TextLoader\Rtf;
 use HelgeSverre\ReceiptScanner\TextLoader\Text;
 use HelgeSverre\ReceiptScanner\TextLoader\Textract;
 use HelgeSverre\ReceiptScanner\TextLoader\TextractUsingS3Upload;
@@ -28,6 +29,7 @@ class TextLoaderFactory
             'html' => $this->container->make(Html::class),
             'pdf' => $this->container->make(Pdf::class),
             'text' => $this->container->make(Text::class),
+            'rtf' => $this->container->make(Rtf::class),
             'textract_s3' => $this->container->make(TextractUsingS3Upload::class),
             'textract' => $this->container->make(Textract::class),
             'web' => $this->container->make(Web::class),
@@ -50,6 +52,11 @@ class TextLoaderFactory
     public function text(mixed $data): ?TextContent
     {
         return $this->create('text')->load($data);
+    }
+
+    public function rtf(mixed $data): ?TextContent
+    {
+        return $this->create('rtf')->load($data);
     }
 
     public function textractUsingS3Upload(mixed $data): ?TextContent

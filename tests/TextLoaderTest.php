@@ -42,11 +42,20 @@ it('Can OCR Pdfs', function () {
     );
 });
 
-it('Can load Word Documents', function () {
+it('Can load a Word documents i found on the internet', function () {
     $text = Text::word(file_get_contents(__DIR__.'/samples/word-document.doc'));
 
     expect($text)->toBeInstanceOf(TextContent::class)->and($text->toString())->toContain(
         'Mauris',
+    );
+});
+
+it('Can load a Word document exported from google docs', function () {
+    $text = Text::word(file_get_contents(__DIR__.'/samples/contract.docx'));
+
+    expect($text)->toBeInstanceOf(TextContent::class)->and($text->toString())->toContain(
+        'Contract Agreement',
+        'Termination of the Agreement',
     );
 });
 
@@ -65,5 +74,14 @@ it('Can load html files', function () {
     expect($text)->toBeInstanceOf(TextContent::class)->and($text->toString())->toContain(
         'Thank you for your purchase!',
         'NOK 1,246.25',
+    );
+});
+
+it('Can load rtf files', function () {
+    $text = Text::rtf(file_get_contents(__DIR__.'/samples/contract.rtf'));
+
+    expect($text)->toBeInstanceOf(TextContent::class)->and($text->toString())->toContain(
+        'Contract Agreement',
+        'Termination of the Agreement',
     );
 });
