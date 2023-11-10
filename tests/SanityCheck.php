@@ -33,7 +33,7 @@ it('validates parsing of receipt data into dto', function () {
     ]);
 
     $text = file_get_contents(__DIR__.'/samples/wolt-pizza-norwegian.txt');
-    $result = ReceiptScanner::scan($text, model: Model::TURBO);
+    $result = ReceiptScanner::scan($text, model: Model::TURBO->value);
 
     expect($result)->toBeInstanceOf(Receipt::class)
         ->and($result->totalAmount)->toBe(568.00)
@@ -117,7 +117,7 @@ it('validates returning parsed receipt as array', function () {
     ]);
 
     $text = file_get_contents(__DIR__.'/samples/wolt-pizza-norwegian.txt');
-    $result = ReceiptScanner::scan($text, model: Model::TURBO_INSTRUCT, asArray: true);
+    $result = ReceiptScanner::scan($text, model: Model::TURBO_INSTRUCT->value, asArray: true);
 
     expect($result)->toBeArray()
         ->and($result['totalAmount'])->toBe(568.00)
