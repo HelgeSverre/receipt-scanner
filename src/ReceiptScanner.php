@@ -5,6 +5,7 @@ namespace HelgeSverre\ReceiptScanner;
 use HelgeSverre\ReceiptScanner\Data\Receipt;
 use HelgeSverre\ReceiptScanner\Enums\Model;
 use HelgeSverre\ReceiptScanner\Exceptions\InvalidJsonReturnedError;
+use Illuminate\Support\Arr;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Responses\Chat\CreateResponse as ChatResponse;
 use OpenAI\Responses\Completions\CreateResponse as CompletionResponse;
@@ -13,7 +14,7 @@ class ReceiptScanner
 {
     public function raw(
         array $data = [],
-        Model $model = Model::TURBO_INSTRUCT,
+        string $model = Model::TURBO_INSTRUCT->value,
         int $maxTokens = 2000,
         float $temperature = 0.1,
         string $template = 'receipt',
@@ -21,11 +22,10 @@ class ReceiptScanner
         $response = $this->sendRequest(
             prompt: Prompt::load($template, $data),
             params: [
-                'model' => $model->value,
+                'model' => $model,
                 'max_tokens' => $maxTokens,
                 'temperature' => $temperature,
             ],
-            model: $model
         );
 
         return $this->parseResponse($response);
@@ -33,7 +33,7 @@ class ReceiptScanner
 
     public function scan(
         TextContent|string $text,
-        Model $model = Model::TURBO_INSTRUCT,
+        string $model = Model::TURBO_INSTRUCT->value,
         int $maxTokens = 2000,
         float $temperature = 0.1,
         string $template = 'receipt',
@@ -42,11 +42,14 @@ class ReceiptScanner
         $response = $this->sendRequest(
             prompt: Prompt::load($template, ['context' => $text]),
             params: [
-                'model' => $model->value,
+                'model' => $model,
                 'max_tokens' => $maxTokens,
                 'temperature' => $temperature,
+                'response_format' => ['type' => 'json_object'],
             ],
-            model: $model
+
+            // TODO: Remove this when "gpt-3.5-turbo-instruct" is obsolete
+            isCompletion: in_array($model, ['gpt-3.5-turbo-instruct', 'text-davinci-003', 'text-davinci-002'])
         );
 
         $data = $this->parseResponse($response);
@@ -54,10 +57,10 @@ class ReceiptScanner
         return $asArray ? $data : Receipt::fromJson($data);
     }
 
-    protected function sendRequest(string $prompt, array $params, Model $model): ChatResponse|CompletionResponse
+    protected function sendRequest(string $prompt, array $params, bool $isCompletion = false): ChatResponse|CompletionResponse
     {
-        return $model->isCompletion()
-            ? OpenAI::completions()->create(array_merge($params, ['prompt' => $prompt]))
+        return $isCompletion
+            ? OpenAI::completions()->create(array_merge(Arr::except($params, ['response_format']), ['prompt' => $prompt]))
             : OpenAI::chat()->create(array_merge($params, ['messages' => [['role' => 'user', 'content' => $prompt]]]));
     }
 

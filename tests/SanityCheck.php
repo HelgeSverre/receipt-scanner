@@ -55,10 +55,10 @@ it('validates parsing of receipt data into dto', function () {
     }
 });
 
-it('confirms real world usability with Turbo Instruct 16K model', function () {
+it('confirms real world usability with GPT4_1106_PREVIEW model', function () {
 
     $text = file_get_contents(__DIR__.'/samples/wolt-pizza-norwegian.txt');
-    $result = ReceiptScanner::scan($text, model: Model::TURBO_16K);
+    $result = ReceiptScanner::scan($text, model: Model::GPT4_1106_PREVIEW->value);
 
     expect($result)->toBeInstanceOf(Receipt::class)
         ->and($result->totalAmount)->toBe(568.00)
@@ -69,6 +69,31 @@ it('confirms real world usability with Turbo Instruct 16K model', function () {
         ->and($result->merchant->name)->toBe('Minde Pizzeria')
         ->and($result->merchant->vatId)->toBe('921670362MVA')
         ->and($result->merchant->address)->toBe('Conrad Mohrs veg 5, 5068 Bergen, NOR');
+
+    $expectedResult = json_decode(file_get_contents(__DIR__.'/samples/wolt-pizza-norwegian.json'), true);
+
+    foreach ($result->lineItems as $index => $lineItem) {
+        expect($lineItem->text)->toBe($expectedResult['lineItems'][$index]['text'])
+            ->and((float) $lineItem->qty)->toBe((float) $expectedResult['lineItems'][$index]['qty'])
+            ->and($lineItem->price)->toBe($expectedResult['lineItems'][$index]['price'])
+            ->and($lineItem->sku)->toBe($expectedResult['lineItems'][$index]['sku']);
+    }
+});
+it('confirms real world usability with Turbo Instruct model', function () {
+
+    $text = file_get_contents(__DIR__.'/samples/wolt-pizza-norwegian.txt');
+    $result = ReceiptScanner::scan($text, model: Model::TURBO_INSTRUCT->value);
+
+    expect($result)->toBeInstanceOf(Receipt::class)
+        ->and($result->totalAmount)->toBe(568.00)
+        ->and($result->orderRef)->toBe('61e4fb2646c424c5cbc9bc88')
+        ->and($result->date->format('Y-m-d'))->toBe('2023-07-21')
+        ->and($result->taxAmount)->toBe(74.08)
+        ->and($result->currency->value)->toBe('NOK')
+        ->and($result->merchant->name)->toBe('Minde Pizzeria')
+        ->and($result->merchant->vatId)->toBe('921670362MVA')
+        ->and($result->merchant->address)->toBe('Conrad Mohrs veg 5, 5068 Bergen, NOR');
+
     $expectedResult = json_decode(file_get_contents(__DIR__.'/samples/wolt-pizza-norwegian.json'), true);
 
     foreach ($result->lineItems as $index => $lineItem) {
