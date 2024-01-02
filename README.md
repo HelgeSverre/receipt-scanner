@@ -1,5 +1,7 @@
 <p align="center"><img src=".github/header.png"></p>
 
+> *Need more flexibility?* Try the [Extractor](https://github.com/HelgeSverre/extractor) package instead, a AI-Powered data extraction library for Laravel
+
 # AI-Powered Receipt and Invoice Scanner for Laravel
 
 ![Latest Version on Packagist](https://img.shields.io/packagist/v/helgesverre/receipt-scanner.svg?style=flat-square)
