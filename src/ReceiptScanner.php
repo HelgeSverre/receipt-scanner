@@ -3,9 +3,9 @@
 namespace HelgeSverre\ReceiptScanner;
 
 use HelgeSverre\ReceiptScanner\Data\Receipt;
-use HelgeSverre\ReceiptScanner\Enums\Model;
 use HelgeSverre\ReceiptScanner\Exceptions\InvalidJsonReturnedError;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Responses\Chat\CreateResponse as ChatResponse;
 use OpenAI\Responses\Completions\CreateResponse as CompletionResponse;
@@ -14,7 +14,7 @@ class ReceiptScanner
 {
     public function raw(
         array $data = [],
-        string $model = Model::TURBO_INSTRUCT->value,
+        string $model = ModelNames::DEFAULT,
         int $maxTokens = 2000,
         float $temperature = 0.1,
         string $template = 'receipt',
@@ -31,9 +31,12 @@ class ReceiptScanner
         return $this->parseResponse($response);
     }
 
+    /**
+     * @throws InvalidJsonReturnedError
+     */
     public function scan(
         TextContent|string $text,
-        string $model = Model::TURBO_INSTRUCT->value,
+        string $model = ModelNames::DEFAULT,
         int $maxTokens = 2000,
         float $temperature = 0.1,
         string $template = 'receipt',
@@ -48,8 +51,7 @@ class ReceiptScanner
                 'response_format' => ['type' => 'json_object'],
             ],
 
-            // TODO: Remove this when "gpt-3.5-turbo-instruct" is obsolete
-            isCompletion: in_array($model, ['gpt-3.5-turbo-instruct', 'text-davinci-003', 'text-davinci-002'])
+            isCompletion: ModelNames::isCompletionModel($model)
         );
 
         $data = $this->parseResponse($response);
@@ -64,17 +66,22 @@ class ReceiptScanner
             : OpenAI::chat()->create(array_merge($params, ['messages' => [['role' => 'user', 'content' => $prompt]]]));
     }
 
+    /**
+     * @throws InvalidJsonReturnedError
+     */
     protected function parseResponse(ChatResponse|CompletionResponse $response): array
     {
-        $json = $this->extractResponseText($response);
+        $text = $this->extractResponseText($response);
 
-        $decoded = json_decode($json, true);
-
-        if ($decoded === null) {
-            throw new InvalidJsonReturnedError("Invalid JSON returned:\n$json");
+        if ($data = json_decode($text, true)) {
+            return $data;
         }
 
-        return $decoded;
+        if ($maybeData = json_decode(Str::between($text, '```json', '```'), true)) {
+            return $maybeData;
+        }
+
+        throw new InvalidJsonReturnedError("Invalid JSON returned:\n$text");
     }
 
     protected function extractResponseText(ChatResponse|CompletionResponse $response): string

@@ -5,21 +5,13 @@ namespace HelgeSverre\ReceiptScanner\Services\Textract\Data;
 final class Block
 {
     const TABLE = 'TABLE';
-
     const CELL = 'CELL';
-
     const PAGE = 'PAGE';
-
     const WORD = 'WORD';
-
     const LINE = 'LINE';
-
     const KEY_VALUE_SET = 'KEY_VALUE_SET';
-
     const SELECTION_ELEMENT = 'SELECTION_ELEMENT';
-
     const KEY = 'KEY';
-
     const VALUE = 'VALUE';
 
     public static function isTable($block): bool

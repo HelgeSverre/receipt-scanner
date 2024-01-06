@@ -170,20 +170,36 @@ ReceiptScanner::scan(
 The input text from the receipt or invoice that needs to be parsed. It accepts either a `TextContent` object or a
 string.
 
-**`$model` (Model)**
+**`$model` (string)
 
 This parameter specifies the OpenAI model used for the extraction process.
 
-It accepts a `Model` enum value. The default model is `Model::TURBO_INSTRUCT`. Different models have different
-speed/accuracy characteristics.
+`HelgeSverre\ReceiptScanner\ModelNames` is a class containing constants for each model, provided for convenience.
+However, you can also directly
+use a string to specify the model if you prefer.
 
-Available Models:
+Different models have different speed/accuracy characteristics.
 
-- `Model::TURBO_INSTRUCT` – Uses the `gpt-3.5-turbo-instruct` model, Fastest and 7/10 accuracy.
-- `Model::TURBO_16K` – Uses the `gpt-3.5-turbo-16k` model, Fast, 8/10 accuracy, accepts longer input.
-- `Model::TURBO` – Uses the `gpt-3.5-turbo` model, Same, but accepts shorter input.
-- `Model::GPT4` – Uses the `gpt-4` model, Slow, 9.5/10 accuracy.
-- `Model::GPT4_32K` – Uses the `gpt-4-32k` model, Same, but accepts longer input.
+If you require high accuracy, use a GPT-4 model, if you need speed, use a GPT-3 model, if you need even more speed, use
+the `gpt-3.5-turbo-instruct` model.
+
+The default model is `ModelNames::TURBO_INSTRUCT`.
+
+| `ModelNames` Constant           | Value                    |
+|---------------------------------|--------------------------|
+| `ModelNames::TURBO`             | `gpt-3.5-turbo`          |
+| `ModelNames::TURBO_INSTRUCT`    | `gpt-3.5-turbo-instruct` |
+| `ModelNames::TURBO_1106`        | `gpt-3.5-turbo-1106`     |
+| `ModelNames::TURBO_16K`         | `gpt-3.5-turbo-16k`      |
+| `ModelNames::TURBO_0613`        | `gpt-3.5-turbo-0613`     |
+| `ModelNames::TURBO_16K_0613`    | `gpt-3.5-turbo-16k-0613` |
+| `ModelNames::TURBO_0301`        | `gpt-3.5-turbo-0301`     |
+| `ModelNames::GPT4`              | `gpt-4`                  |
+| `ModelNames::GPT4_32K`          | `gpt-4-32k`              |
+| `ModelNames::GPT4_32K_0613`     | `gpt-4-32k-0613`         |
+| `ModelNames::GPT4_1106_PREVIEW` | `gpt-4-1106-preview`     |
+| `ModelNames::GPT4_0314`         | `gpt-4-0314`             |
+| `ModelNames::GPT4_32K_0314`     | `gpt-4-32k-0314`         |
 
 **`$maxTokens` (int)**
 

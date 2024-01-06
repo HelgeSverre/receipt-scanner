@@ -11,11 +11,8 @@ use Illuminate\Support\Arr;
 class TextractService
 {
     protected const STATUS_IN_PROGRESS = 'IN_PROGRESS';
-
     protected const STATUS_PARTIAL_SUCCESS = 'PARTIAL_SUCCESS';
-
     protected const STATUS_FAILED = 'FAILED';
-
     protected const STATUS_SUCCEEDED = 'SUCCEEDED';
 
     public function __construct(protected TextractClient $textractClient)
