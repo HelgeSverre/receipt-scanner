@@ -22,7 +22,7 @@
         "illuminate/contracts": "^10.0",
         "jstewmc/rtf": "^0.5.2",
         "league/flysystem-aws-s3-v3": "^3.16",
-        "openai-php/laravel": "^0.7.0",
+        "openai-php/laravel": "^v0.8.1",
         "prinsfrank/standards": "^2.1",
         "smalot/pdfparser": "*",
         "spatie/laravel-package-tools": "^1.14.0",
