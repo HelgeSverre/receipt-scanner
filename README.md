@@ -163,6 +163,21 @@ ReceiptScanner::scan(
 )
 ```
 
+## Specifying the model
+
+To use a different model, you can specify the model name to use with the `model` named argument when calling
+the `scan()` method.
+
+```php
+use HelgeSverre\ReceiptScanner\Facades\ReceiptScanner;
+
+// With the ModelNames class
+ReceiptScanner::scan($content, model: Model::GPT4_1106_PREVIEW)
+
+// With a string
+ReceiptScanner::scan($content, model: 'gpt-4-1106-preview')
+```
+
 ## All parameters and what they do
 
 **`$text` (TextContent|string)**
