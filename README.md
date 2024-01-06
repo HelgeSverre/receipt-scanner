@@ -1,6 +1,7 @@
 <p align="center"><img src=".github/header.png"></p>
 
-> *Need more flexibility?* Try the [Extractor](https://github.com/HelgeSverre/extractor) package instead, a AI-Powered data extraction library for Laravel
+> *Need more flexibility?* Try the [Extractor](https://github.com/HelgeSverre/extractor) package instead, a AI-Powered
+> data extraction library for Laravel
 
 # AI-Powered Receipt and Invoice Scanner for Laravel
 
@@ -172,9 +173,10 @@ the `scan()` method.
 
 ```php
 use HelgeSverre\ReceiptScanner\Facades\ReceiptScanner;
+use HelgeSverre\ReceiptScanner\ModelNames;
 
 // With the ModelNames class
-ReceiptScanner::scan($content, model: Model::GPT4_1106_PREVIEW)
+ReceiptScanner::scan($content, model: ModelNames::GPT4_1106_PREVIEW)
 
 // With a string
 ReceiptScanner::scan($content, model: 'gpt-4-1106-preview')
@@ -251,7 +253,7 @@ use HelgeSverre\ReceiptScanner\Facades\ReceiptScanner;
 
 $parsedReceipt = ReceiptScanner::scan(
     text: $textInput,
-    model: Model::TURBO_INSTRUCT,
+    model: ModelNames::TURBO_INSTRUCT,
     maxTokens: 500,
     temperature: 0.2,
     template: 'minimal_invoice',
@@ -363,7 +365,7 @@ use HelgeSverre\ReceiptScanner\Facades\ReceiptScanner;
 
 $receipt = ReceiptScanner::scan(
     text: "Your invoice here",
-    model:  Model::TURBO_INSTRUCT,
+    model:  ModelNames::TURBO_INSTRUCT,
     template: 'minimal_invoice',
     asArray: true,
 );
