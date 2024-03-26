@@ -6,16 +6,24 @@ class ModelNames
 {
     const DEFAULT = 'gpt-3.5-turbo-instruct';
 
-    // Turbo Models
+    // GPT-3.5-Turbo Models
     const TURBO = 'gpt-3.5-turbo';
     const TURBO_INSTRUCT = 'gpt-3.5-turbo-instruct';
     const TURBO_1106 = 'gpt-3.5-turbo-1106';
+    const TURBO_0125 = 'gpt-3.5-turbo-0125';
+
+    /**
+     * @deprecated gpt-3.5-turbo-16k
+     */
     const TURBO_16K = 'gpt-3.5-turbo-16k';
 
     // Legacy Turbo Models
-    const TURBO_0613 = 'gpt-3.5-turbo-0613';
-    const TURBO_16K_0613 = 'gpt-3.5-turbo-16k-0613';
     const TURBO_0301 = 'gpt-3.5-turbo-0301';
+
+    // GPT-4-Turbo Models
+    const GPT4_TURBO = 'gpt-4-turbo-preview';
+    const GPT4_TURBO_0125 = 'gpt-4-0125-preview';
+    const GPT4_TURBO_1106 = 'gpt-4-1106-preview';
 
     // GPT-4 Models
     const GPT4 = 'gpt-4';
