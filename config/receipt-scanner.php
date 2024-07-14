@@ -65,8 +65,8 @@ return [
     */
 
     'textract_region' => env('TEXTRACT_REGION'),
-    'textract_version' => env('TEXTRACT_VERSION'),
+    'textract_version' => env('TEXTRACT_VERSION', '2018-06-27'),
     'textract_key' => env('TEXTRACT_KEY'),
-    'textract_secret' => env('TEXTRACT_SECRET', '2018-06-27'),
+    'textract_secret' => env('TEXTRACT_SECRET'),
 
 ];
