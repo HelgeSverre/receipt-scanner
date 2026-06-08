@@ -14,6 +14,34 @@ use OpenAI\Laravel\Facades\OpenAI;
 use OpenAI\Responses\Chat\CreateResponse as ChatResponse;
 use OpenAI\Responses\Completions\CreateResponse as CompletionResponse;
 
+it('handles array values for merchant string fields gracefully', function () {
+    $json = [
+        'orderRef' => 'test-order-123',
+        'date' => '2023-07-21',
+        'taxAmount' => 10.00,
+        'totalAmount' => 100.00,
+        'currency' => 'NOK',
+        'merchant' => [
+            'name' => ['Minde Pizzeria'],
+            'vatId' => '921670362MVA',
+            'address' => ['Conrad Mohrs veg 5', '5068 Bergen', 'NOR'],
+            'city' => 'Bergen',
+            'zip' => '5068',
+            'country' => 'NOR',
+            'website' => null,
+            'email' => null,
+            'phone' => null,
+        ],
+        'lineItems' => [],
+    ];
+
+    $receipt = Receipt::fromJson($json);
+
+    expect($receipt)->toBeInstanceOf(Receipt::class)
+        ->and($receipt->merchant->name)->toBe('Minde Pizzeria')
+        ->and($receipt->merchant->address)->toBe('Conrad Mohrs veg 5, 5068 Bergen, NOR');
+});
+
 it('validates parsing of receipt data into dto', function () {
     OpenAI::fake([
         ChatResponse::fake([

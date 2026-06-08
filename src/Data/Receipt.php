@@ -25,23 +25,25 @@ class Receipt
 
     public static function fromJson(array $json): self
     {
+        $asString = fn ($value): ?string => is_array($value) ? implode(', ', $value) : $value;
+
         return new self(
-            orderRef: Arr::get($json, 'orderRef'),
+            orderRef: $asString(Arr::get($json, 'orderRef')),
             date: rescue(fn () => Carbon::parse(Arr::get($json, 'date')), report: false),
             taxAmount: NumberParser::parse(Arr::get($json, 'taxAmount', 0)) ?? 0,
             totalAmount: NumberParser::parse(Arr::get($json, 'totalAmount', 0)) ?? 0,
             currency: CurrencyAlpha3::tryFrom(Arr::get($json, 'currency', '')),
             merchant: new Merchant(
-                name: Arr::get($json, 'merchant.name'),
-                vatId: Arr::get($json, 'merchant.vatId'),
-                address: Arr::get($json, 'merchant.address'),
+                name: $asString(Arr::get($json, 'merchant.name')),
+                vatId: $asString(Arr::get($json, 'merchant.vatId')),
+                address: $asString(Arr::get($json, 'merchant.address')),
 
-                city: Arr::get($json, 'merchant.city'),
-                zip: Arr::get($json, 'merchant.zip'),
-                country: Arr::get($json, 'merchant.country'),
-                website: Arr::get($json, 'merchant.website'),
-                email: Arr::get($json, 'merchant.email'),
-                phone: Arr::get($json, 'merchant.phone'),
+                city: $asString(Arr::get($json, 'merchant.city')),
+                zip: $asString(Arr::get($json, 'merchant.zip')),
+                country: $asString(Arr::get($json, 'merchant.country')),
+                website: $asString(Arr::get($json, 'merchant.website')),
+                email: $asString(Arr::get($json, 'merchant.email')),
+                phone: $asString(Arr::get($json, 'merchant.phone')),
             ),
             lineItems: collect(Arr::get($json, 'lineItems', []))
                 ->map(fn ($item) => new LineItem(
