@@ -8,6 +8,8 @@ use HelgeSverre\ReceiptScanner\TextLoader\Pdf;
 use HelgeSverre\ReceiptScanner\TextLoader\Rtf;
 use HelgeSverre\ReceiptScanner\TextLoader\Text;
 use HelgeSverre\ReceiptScanner\TextLoader\Textract;
+use HelgeSverre\ReceiptScanner\TextLoader\TextractAnalyzeExpense;
+use HelgeSverre\ReceiptScanner\TextLoader\TextractAnalyzeExpenseUsingS3Upload;
 use HelgeSverre\ReceiptScanner\TextLoader\TextractUsingS3Upload;
 use HelgeSverre\ReceiptScanner\TextLoader\Web;
 use HelgeSverre\ReceiptScanner\TextLoader\Word;
@@ -32,6 +34,8 @@ class TextLoaderFactory
             'rtf' => $this->container->make(Rtf::class),
             'textract_s3' => $this->container->make(TextractUsingS3Upload::class),
             'textract' => $this->container->make(Textract::class),
+            'textract_analyze_expense' => $this->container->make(TextractAnalyzeExpense::class),
+            'textract_analyze_expense_s3' => $this->container->make(TextractAnalyzeExpenseUsingS3Upload::class),
             'web' => $this->container->make(Web::class),
             'word' => $this->container->make(Word::class),
             default => throw new InvalidArgumentException("Invalid text loader type: $type"),
@@ -67,6 +71,16 @@ class TextLoaderFactory
     public function textract(mixed $data): ?TextContent
     {
         return $this->create('textract')->load($data);
+    }
+
+    public function textractAnalyzeExpense(mixed $data): ?TextContent
+    {
+        return $this->create('textract_analyze_expense')->load($data);
+    }
+
+    public function textractAnalyzeExpenseUsingS3Upload(mixed $data): ?TextContent
+    {
+        return $this->create('textract_analyze_expense_s3')->load($data);
     }
 
     public function web(mixed $data): ?TextContent

@@ -96,6 +96,8 @@ $textPlainText = Text::text(file_get_contents('./receipt.txt'));
 $textPdf = Text::pdf(file_get_contents('./receipt.pdf'));
 $textImageOcr = Text::textract(file_get_contents('./receipt.jpg'));
 $textPdfOcr = Text::textractUsingS3Upload(file_get_contents('./receipt.pdf'));
+$textExpenseOcr = Text::textractAnalyzeExpense(file_get_contents('./receipt.jpg'));
+$textExpensePdfOcr = Text::textractAnalyzeExpenseUsingS3Upload(file_get_contents('./receipt.pdf'));
 $textWord = Text::word(file_get_contents('./receipt.doc'));
 $textWeb = Text::web('https://example.com');
 $textHtml = Text::html(file_get_contents('./receipt.html'));
@@ -111,6 +113,8 @@ ReceiptScanner::scan($textPlainText)
 ReceiptScanner::scan($textPdf)
 ReceiptScanner::scan($textImageOcr)
 ReceiptScanner::scan($textPdfOcr)
+ReceiptScanner::scan($textExpenseOcr)
+ReceiptScanner::scan($textExpensePdfOcr)
 ReceiptScanner::scan($textWord)
 ReceiptScanner::scan($textWeb)
 ReceiptScanner::scan($textHtml)
@@ -328,6 +332,50 @@ Textract is not available in all regions:
 > Regions.
 
 See: https://aws.amazon.com/textract/faqs/
+
+### Textract Text Loaders
+
+| Loader method                                | Type key                          | Description                                                                                        |
+|----------------------------------------------|-----------------------------------|----------------------------------------------------------------------------------------------------|
+| `Text::textract($bytes)`                     | `textract`                        | Synchronous OCR for images using `DetectDocumentText`. Fast, no S3 required.                       |
+| `Text::textractUsingS3Upload($bytes)`        | `textract_s3`                     | Async OCR for PDFs and large files via S3 using `StartDocumentTextDetection`.                      |
+| `Text::textractAnalyzeExpense($bytes)`       | `textract_analyze_expense`        | Synchronous expense analysis for images using `AnalyzeExpense`. Returns structured receipt fields. |
+| `Text::textractAnalyzeExpenseUsingS3Upload($bytes)` | `textract_analyze_expense_s3` | Async expense analysis for PDFs and large files via S3 using `StartExpenseAnalysis`.               |
+
+### Using AnalyzeExpense
+
+The `AnalyzeExpense` API is purpose-built for receipts and invoices. Instead of returning raw OCR text, it
+returns structured data — summary fields (merchant name, date, total, tax, etc.) and individual line items —
+which is then formatted into labelled text before being passed to the AI model.
+
+```php
+use HelgeSverre\ReceiptScanner\Facades\Text;
+use HelgeSverre\ReceiptScanner\Facades\ReceiptScanner;
+
+// For images (synchronous, no S3 needed)
+$text = Text::textractAnalyzeExpense(file_get_contents('./receipt.jpg'));
+
+// For PDFs or large files (async, requires S3 configuration)
+$text = Text::textractAnalyzeExpenseUsingS3Upload(file_get_contents('./receipt.pdf'));
+
+$receipt = ReceiptScanner::scan($text);
+```
+
+The structured text produced by `AnalyzeExpense` looks like this before being sent to the AI model:
+
+```
+SUMMARY FIELDS:
+VENDOR_NAME: Walmart
+VENDOR_ADDRESS: 123 Main St, Springfield
+INVOICE_RECEIPT_DATE: 2024-01-15
+TOTAL: $45.23
+SUBTOTAL: $42.00
+TAX: $3.23
+
+LINE ITEMS:
+- ITEM: Apple, QUANTITY: 2, UNIT_PRICE: $1.00, PRICE: $2.00
+- ITEM: Bread, QUANTITY: 1, UNIT_PRICE: $3.99, PRICE: $3.99
+```
 
 ## Publishing Prompts
 
